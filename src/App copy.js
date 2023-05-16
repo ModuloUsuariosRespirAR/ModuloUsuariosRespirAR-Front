@@ -1,5 +1,3 @@
-import "./App.css";
-
 import { useEffect } from "react";
 
 import { Routes, Route, Navigate, useLocation, Router } from "react-router-dom";
@@ -10,9 +8,10 @@ import CssBaseline from "@mui/material/CssBaseline";
 import theme from "./assets/theme";
 import Principal from "./layouts/pages/principal";
 
+// Material Kit 2 React routes
 import routes from "./routes";
 
-function App() {
+export default function App() {
   const { pathname } = useLocation();
 
   // Setting page scroll to 0 when changing the route
@@ -52,5 +51,3 @@ function App() {
     </ThemeProvider>
   );
 }
-
-export default App;
