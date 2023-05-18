@@ -27,15 +27,13 @@ function UserTable() {
                             <Button
                                 variant="contained"
                                 color="primary"
-                                onClick={() => handleAction(tableMeta.rowData)}
-                            >
+                                onClick={() => handleEdit(tableMeta.rowData)}>
                                 Editar Usuario
                             </Button>
                             <Button
                                 variant="contained"
                                 color="secondary"
-                                onClick={() => handleAction(tableMeta.rowData)}
-                            >
+                                onClick={() => handleDelete(tableMeta.rowData)}>
                                 Eliminar Usuario
                             </Button>
                         </>
@@ -65,9 +63,14 @@ function UserTable() {
         rowsPerPage: 10,
     };
 
-    const handleAction = (rowData) => {
+    const handleEdit = (rowData) => {
         // Aquí puedes realizar la lógica deseada en función de los datos de la fila seleccionada
         console.log("Acción realizada:", rowData);
+    };
+
+    const handleDelete = (rowData) => {
+        // Aquí puedes realizar la lógica deseada en función de los datos de la fila seleccionada
+        window.confirm('Estas seguro que deseas eliminar al Usuario: ' + rowData[0] + '?')
     };
 
 
