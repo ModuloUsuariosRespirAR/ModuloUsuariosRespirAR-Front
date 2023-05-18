@@ -1,4 +1,5 @@
 import SignIn from "./layouts/pages/authentication/sign-in";
+import UserTablePage from "./layouts/pages/userTable"
 
 const routes = [
   {
@@ -12,7 +13,7 @@ const routes = [
           {
             name: "Lista de usuarios",
             route: "/pages/landing-pages/usuarios",
-            component: "",
+            component: <UserTablePage />,
           },
         ],
       },
