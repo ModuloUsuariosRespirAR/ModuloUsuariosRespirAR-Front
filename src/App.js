@@ -12,6 +12,8 @@ import Principal from "./layouts/pages/principal";
 
 import routes from "./routes";
 
+import UserSettings from "./pages/UserSettings/userSettings";
+
 function App() {
   const { pathname } = useLocation();
 
@@ -48,6 +50,7 @@ function App() {
         {getRoutes(routes)}
         <Route path="/principal" element={<Principal />} />
         <Route path="*" element={<Navigate to="/principal" />} />
+        <Route path="/userSetting" element={<UserSettings/>} />
       </Routes>
     </ThemeProvider>
   );
