@@ -35,7 +35,7 @@ function UserTable() {
                 aria-label="delete"
                 onClick={() => handleDelete(tableMeta.rowData)}
               >
-                <DeleteIcon color="primary" />
+                <DeleteIcon color="error" />
               </IconButton>
             </>
           );
