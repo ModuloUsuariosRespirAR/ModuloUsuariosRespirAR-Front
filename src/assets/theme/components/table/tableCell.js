@@ -10,7 +10,7 @@ const { light } = colors;
 export default {
   styleOverrides: {
     root: {
-      padding: `${pxToRem(12)} ${pxToRem(16)}`,
+      padding: `${pxToRem(10)} ${pxToRem(16)}`,
       borderBottom: `${borderWidth[1]} solid ${light.main}`,
     },
   },
