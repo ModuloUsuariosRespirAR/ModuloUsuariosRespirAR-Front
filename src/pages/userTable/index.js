@@ -1,8 +1,19 @@
 import React from "react";
+
 import MUIDataTable from "mui-datatables";
-import { IconButton } from "@mui/material";
+import { IconButton, Grid, Card } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+
+import Box from "../../components/Box";
+
+import bgImage from "../../assets/images/fiware.jpg";
+
+import DefaultNavbar from "../../components/NavBar/DefaultNavBar";
+import CenteredFooter from "../../components/Footer/CenteredFooter";
+
+import routes from "../../routes";
+import BaseLayout from "../../layouts/components/BaseLayout/BaseLayout";
 
 function UserTable() {
   const columns = [
@@ -74,14 +85,28 @@ function UserTable() {
   };
 
   return (
-    <div>
-      <MUIDataTable
-        columns={columns}
-        data={data}
-        options={options}
-        title="Usuarios"
-      />
-    </div>
+    <>
+      <BaseLayout>
+        <Grid
+          container
+          spacing={1}
+          justifyContent="center"
+          alignItems="center"
+          height="100%"
+        >
+          <Grid item xs={11} sm={9} md={5} lg={11} xl={0}>
+            <Card>
+              <MUIDataTable
+                columns={columns}
+                data={data}
+                options={options}
+                title="Usuarios"
+              />
+            </Card>
+          </Grid>
+        </Grid>
+      </BaseLayout>
+    </>
   );
 }
 

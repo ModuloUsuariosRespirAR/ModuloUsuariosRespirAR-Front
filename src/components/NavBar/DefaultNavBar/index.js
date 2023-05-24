@@ -1,5 +1,5 @@
 import { Fragment, useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import PropTypes from "prop-types";
 import Container from "@mui/material/Container";
 import Icon from "@mui/material/Icon";
@@ -470,7 +470,7 @@ function DefaultNavbar({
             {action &&
               (action.type === "internal" ? (
                 <Button
-                  component={Link}
+                  component={NavLink}
                   to={action.route}
                   variant={
                     action.color === "white" || action.color === "default"
@@ -486,7 +486,6 @@ function DefaultNavbar({
                 <Button
                   component="a"
                   href={action.route}
-                  target="_blank"
                   rel="noreferrer"
                   variant={
                     action.color === "white" || action.color === "default"

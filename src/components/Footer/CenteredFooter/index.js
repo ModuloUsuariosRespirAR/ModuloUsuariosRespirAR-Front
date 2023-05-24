@@ -25,7 +25,7 @@ function CenteredFooter({ socials, light }) {
   ));
 
   return (
-    <Box component="footer" py={6}>
+    <Box component="footer" py={2}>
       <Grid container justifyContent="center">
         <Grid item xs={12} lg={8}>
           <Stack
@@ -41,7 +41,7 @@ function CenteredFooter({ socials, light }) {
         </Grid>
         <Grid item xs={12} lg={8} sx={{ textAlign: "center" }}>
           <Typography variant="body2" color={light ? "white" : "secondary"}>
-            Copyright &copy; {year} Material by ORT{" "}
+            Copyright &copy; {year} Ciudades del Futuro by ORT{" "}
           </Typography>
         </Grid>
       </Grid>
