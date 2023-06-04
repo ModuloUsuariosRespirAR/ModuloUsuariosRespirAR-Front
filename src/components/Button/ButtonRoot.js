@@ -46,6 +46,10 @@ export default styled(Button)(({ theme, ownerState }) => {
       colorValue = text.main;
     } else if (color === "white" || color === "light") {
       colorValue = dark.main;
+    } else if (color === "info") {
+      colorValue = transparent.main;
+    } else {
+      colorValue = white.main;
     }
 
     let focusedColorValue = white.main;
@@ -56,6 +60,8 @@ export default styled(Button)(({ theme, ownerState }) => {
       focusedColorValue = dark.main;
     } else if (color === "primary" || color === "error" || color === "dark") {
       focusedColorValue = white.main;
+    } else {
+      colorValue = white.main;
     }
 
     return {

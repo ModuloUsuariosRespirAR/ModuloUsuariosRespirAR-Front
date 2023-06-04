@@ -19,9 +19,9 @@ const Button = forwardRef(
 
 Button.defaultProps = {
   size: "medium",
-  variant: "contained",
-  color: "white",
-  circular: false,
+  variant: "outlined",
+  color: "primary",
+  circular: true,
   iconOnly: false,
 };
 

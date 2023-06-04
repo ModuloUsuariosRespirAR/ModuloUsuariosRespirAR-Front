@@ -1,7 +1,7 @@
 import React from "react";
 
 import MUIDataTable from "mui-datatables";
-import { IconButton, Grid, Card, Button, Box } from "@mui/material";
+import { IconButton, Grid, Card, Button } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
@@ -20,14 +20,6 @@ function UserTable() {
       options: {
         display: false,
       },
-    },
-    {
-      name: "username",
-      label: "Username",
-    },
-    {
-      name: "email",
-      label: "Email",
     },
     {
       name: "rol",
@@ -60,19 +52,8 @@ function UserTable() {
   ];
 
   const data = [
-    {
-      id: 1,
-      username: "FacundoCasas",
-      email: "facundo@gmail.com",
-      rol: "admin",
-    },
-    { id: 2, username: "DonLuis", email: "don@gmail.com", rol: "user" },
-    { id: 3, username: "AgustinPascal", email: "agus@gmail.com", rol: "admin" },
-    { id: 4, username: "Anakin", email: "anakin@gmail.com", rol: "admin" },
-    { id: 5, username: "Lion", email: "Lion@gmail.com", rol: "user" },
-    { id: 6, username: "kaiju", email: "kaiju@gmail.com", rol: "admin" },
-    { id: 7, username: "Dormamu", email: "Dormamu@gmail.com", rol: "user" },
-    { id: 8, username: "RickSanchez", email: "rick@gmail.com", rol: "admin" },
+    { id: 1, rol: "Administrador" },
+    { id: 2, rol: "Usuario" },
   ];
 
   const options = {
@@ -84,18 +65,18 @@ function UserTable() {
   };
 
   const handleCreate = () => {
-    navigate("/pages/createUser");
+    navigate("/pages/createRol");
     window.location.reload();
   };
 
   const handleEdit = (rowData) => {
-    navigate("/pages/userSettings/" + `${rowData[0]}`);
+    navigate("/pages/rolSettings/" + `${rowData[0]}`);
     window.location.reload();
   };
 
   const handleDelete = (rowData) => {
     window.confirm(
-      "Estas seguro que deseas eliminar al Usuario: " + rowData[0] + "?"
+      "Estas seguro que deseas eliminar el rol: " + rowData[1] + "?"
     );
   };
 
@@ -116,7 +97,7 @@ function UserTable() {
               startIcon={<AddIcon />}
               onClick={handleCreate}
             >
-              Crear usuario
+              Crear rol
             </Button>
           </Grid>
         </Grid>
@@ -127,7 +108,7 @@ function UserTable() {
                 columns={columns}
                 data={data}
                 options={options}
-                title="Usuarios"
+                title="Roles"
               />
             </Card>
           </Grid>

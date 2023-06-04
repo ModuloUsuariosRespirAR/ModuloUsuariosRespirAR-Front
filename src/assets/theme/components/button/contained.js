@@ -4,14 +4,14 @@ import typography from "./../../base/typography";
 
 import pxToRem from "./../../functions/pxToRem";
 
-const { white, text, info, secondary } = colors;
+const { white, info, secondary } = colors;
 const { size } = typography;
 
 export default {
   base: {
     backgroundColor: white.main,
     minHeight: pxToRem(40),
-    color: text.main,
+    color: white.main,
     padding: `${pxToRem(10)} ${pxToRem(24)}`,
 
     "&:hover": {

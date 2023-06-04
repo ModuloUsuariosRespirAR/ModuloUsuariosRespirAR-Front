@@ -14,9 +14,14 @@ import bgImage from "../../../assets/images/smartcity.jpg";
 import routes from "../../../routes";
 import footerRoutes from "../../../footer.routes";
 
-function BaseLayout({ breadcrumb, title, children }) {
+function BaseLayout({ children }) {
   return (
-    <>
+    <Box
+      display="flex"
+      flexDirection="column"
+      bgColor="white"
+      minHeight="100vh"
+    >
       <Box
         position="fixed"
         top={1}
@@ -49,23 +54,17 @@ function BaseLayout({ breadcrumb, title, children }) {
             sticky
           />
         </Box>
-
-        <Box fixed sx={{ mt: 15 }}>
-          {children}
-        </Box>
+        <Box sx={{ mt: 10 }}>{children}</Box>
       </Box>
-      <Box width="100%" position="absolute" zIndex={2} bottom="1.625rem">
+      <Box mt="auto">
         <CenteredFooter content={footerRoutes} />
       </Box>
-    </>
+    </Box>
   );
 }
 
 // Typechecking props for the BaseLayout
 BaseLayout.propTypes = {
-  //   breadcrumb: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.object]))
-  //     .isRequired,
-  title: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
 };
 

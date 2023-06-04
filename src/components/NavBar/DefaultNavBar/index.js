@@ -245,7 +245,18 @@ function DefaultNavbar({
               ) : (
                 item.name
               )}
-              {item.collapse}
+              {item.collapse && (
+                <Icon
+                  fontSize="small"
+                  sx={{
+                    fontWeight: "normal",
+                    verticalAlign: "middle",
+                    mr: -0.5,
+                  }}
+                >
+                  keyboard_arrow_right
+                </Icon>
+              )}
             </Typography>
           );
         });
@@ -290,9 +301,9 @@ function DefaultNavbar({
         >
           <Box borderRadius="lg">
             <Typography variant="h1" color="white">
-              {/* <Icon ref={setArrowRef} sx={{ mt: -3 }}>
+              <Icon ref={setArrowRef} sx={{ mt: -3 }}>
                 arrow_drop_up
-              </Icon> */}
+              </Icon>
             </Typography>
             <Box shadow="lg" borderRadius="lg" p={2} mt={2}>
               {renderRoutes}
@@ -372,7 +383,18 @@ function DefaultNavbar({
                     ) : (
                       item.name
                     )}
-                    {item.collapse}
+                    {item.collapse && (
+                      <Icon
+                        fontSize="small"
+                        sx={{
+                          fontWeight: "normal",
+                          verticalAlign: "middle",
+                          mr: -0.5,
+                        }}
+                      >
+                        keyboard_arrow_right
+                      </Icon>
+                    )}
                   </Typography>
                 );
               });
