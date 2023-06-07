@@ -1,18 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
-import {
-  Grid,
-  ButtonBase,
-  Typography,
-  Box,
-  Link,
-  Badge,
-  Container,
-} from "@mui/material";
+import { Grid, Box, Link, Container } from "@mui/material";
 
-import RotatingCard from "../../../components/Card/RotatingCard";
-import RotatingCardBack from "../../../components/Card/RotatingCard/RotatingCardBack";
-import RotatingCardFront from "../../../components/Card/RotatingCard/RotatingCardFront";
 import Card from "../../../components/Card/Card";
 
 import BaseLayout from "../../../layouts/components/BaseLayout/BaseLayout";
@@ -39,12 +28,12 @@ const cards = [
 
 function DesignBlocks() {
   const renderData = cards.map(({ items }) => (
-    <Grid container spacing={3} sx={{ mb: 10 }}>
+    <Grid container spacing={5} sx={{ mb: 10 }}>
       <Grid item xs={12} lg={3}>
-        <Box position="sticky" top="100px" pb={{ xs: 2, lg: 6 }}></Box>
+        <Box position="center" top="100px" pb={{ xs: 2, lg: 6 }}></Box>
       </Grid>
       <Grid item xs={12} lg={9}>
-        <Grid container spacing={3}>
+        <Grid container style={{ gap: 200 }} spacing={5} minHeight="70px">
           {items.map(({ image, name, route }) => (
             <Grid item xs={12} md={4} sx={{ mb: 2 }} key={name}>
               <Link href={route}>

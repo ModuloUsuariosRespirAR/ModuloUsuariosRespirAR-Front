@@ -22,6 +22,7 @@ import UserCreatePage from "./layouts/pages/userCreate";
 import RolCreatePage from "./layouts/pages/rolCreate";
 import RolDetailsPage from "./layouts/pages/rolDetails";
 import RolModificationPage from "./layouts/pages/rolModification";
+import LogOut from "./pages/LandingPages/LogOut";
 
 function App() {
   const { pathname } = useLocation();
@@ -74,6 +75,7 @@ function App() {
             path="/pages/rolModification/:id"
             element={<RolModificationPage />}
           />
+          <Route path="/pages/log-out" element={<LogOut />} />
         </Routes>
       </ThemeProvider>
     </UserProvider>

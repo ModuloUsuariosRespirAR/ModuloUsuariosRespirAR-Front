@@ -45,6 +45,7 @@ const getUser = async (username, password) => {
     )
     .then((res) => {
       localStorage.setItem("Token", res.data["X-Auth-token"]);
+      localStorage.setItem("Access", res.data["accessToken"]);
       return res.data;
     })
     .catch((error) => {
@@ -216,4 +217,26 @@ const userDelete = async (token, userId) => {
   }
 };
 
-export { getUsers, getUser, createUser, userDetail, userEdit, userDelete };
+const getLoguedUser = async (accessToken) => {
+  const user = await axios
+    .post(HOST_URL + "/login/retrieve", {
+      accessToken,
+    })
+    .then((res) => {
+      return res.data;
+    })
+    .catch((error) => {
+      return error;
+    });
+
+  return user;
+};
+export {
+  getUsers,
+  getUser,
+  createUser,
+  userDetail,
+  userEdit,
+  userDelete,
+  getLoguedUser,
+};

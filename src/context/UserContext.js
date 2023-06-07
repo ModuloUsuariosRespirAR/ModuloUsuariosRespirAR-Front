@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import {
   getUsers,
   getUser,
@@ -6,15 +6,13 @@ import {
   userDetail,
   userEdit,
   userDelete,
+  getLoguedUser,
 } from "../services/UserService";
 
 const UserContext = createContext({});
 
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState({
-    username: "",
-    password: "",
-  });
+  const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const getUsersList = async (token) => {
@@ -33,12 +31,10 @@ export const UserProvider = ({ children }) => {
   };
 
   const logOut = () => {
-    setUser({
-      usuario: "",
-      contrasenia: "",
-    });
-    localStorage.removeItem("Token");
     setIsAuthenticated(false);
+    setUser(null);
+    localStorage.removeItem("Token");
+    localStorage.removeItem("Access");
   };
 
   const createNewUser = async (
@@ -76,6 +72,18 @@ export const UserProvider = ({ children }) => {
     const result = await userDelete(token, userId);
     return result;
   };
+
+  useEffect(() => {
+    console.count("Retrieve");
+    let accessToken = localStorage.getItem("Access");
+    getLoguedUser(accessToken)
+      .then((user) => {
+        if (user) {
+          setIsAuthenticated(true);
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   return (
     <UserContext.Provider

@@ -24,9 +24,13 @@ function UserModification() {
 
   const navigate = useNavigate();
 
-  const [userInfo, setUserInfo] = useState([]);
+  const [userInfo, setUserInfo] = useState({
+    email: "",
+    username: "",
+    roles: "",
+  });
+
   const { userModification, userDetails } = useAuth();
-  const [username, setUsername] = useState({});
   const [habilitado, setHabilitado] = useState(false);
   const [roles, setRoles] = useState("");
 
@@ -58,16 +62,18 @@ function UserModification() {
   };
 
   const handleChange = (event) => {
-    setUserInfo({ ...userInfo, [event.target.username]: event.target.value });
+    setUserInfo((ui) => ({ ...ui, username: event.target.value }));
   };
 
   const handleSubmit = async (event) => {
     let token = localStorage.getItem("Token");
     event.preventDefault();
 
+    console.log("Entra al guardar");
+
     try {
       if (token !== null) {
-        const result = await userModification(token, userId, username);
+        const result = await userModification(token, userId, userInfo.username);
         if (result !== null) {
           navigate("/pages/usuarios");
         } else {
@@ -129,7 +135,7 @@ function UserModification() {
                       type="email"
                       label="Email"
                       fullWidth
-                      value={userInfo.email || ""}
+                      value={userInfo.email}
                       disabled
                     />
                   </Box>

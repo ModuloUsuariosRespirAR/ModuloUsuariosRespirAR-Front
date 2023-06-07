@@ -25,9 +25,9 @@ function CenteredFooter({ socials, light }) {
   ));
 
   return (
-    <Box component="footer" py={2}>
-      <Grid container justifyContent="center">
-        <Grid item xs={12} lg={5}>
+    <Box component="footer" py={2} bgColor="white">
+      <Grid container justifyContent="center" color="white">
+        <Grid item xs={12} lg={8}>
           <Stack
             display="flex"
             direction="row"

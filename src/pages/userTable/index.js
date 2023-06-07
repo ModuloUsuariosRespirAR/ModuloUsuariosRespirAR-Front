@@ -111,29 +111,26 @@ function UserTable() {
 
   const handleCreate = () => {
     navigate("/pages/createUser");
-    window.location.reload();
   };
 
   const handleInfo = (rowData) => {
     navigate("/pages/userDetails/" + `${rowData[0]}`);
-    window.location.reload();
   };
 
   const handleEdit = (rowData) => {
     navigate("/pages/userModification/" + `${rowData[0]}`);
-    window.location.reload();
   };
 
   const handleDelete = async (rowData) => {
     let confirm = window.confirm(
       "Está seguro que desea eliminar al Usuario: " + rowData[1] + "?"
     );
-
     try {
       if (token !== null && confirm) {
-        const result = await userDeletation(token, rowData[0]);
+        let id = rowData[0];
+        const result = await userDeletation(token, id);
         if (result !== null) {
-          window.location.reload();
+          setUsers((users) => users.filter((u) => u.id !== id));
         } else {
         }
       } else {

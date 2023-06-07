@@ -16,7 +16,6 @@ import Button from "../../../components/Button";
 import BaseLayout from "../../../layouts/components/BaseLayout/BaseLayout";
 
 function SignInBasic() {
-  const url = "http://localhost:8000/login";
   const navigate = useNavigate();
 
   const { loginUsuario } = useAuth();
