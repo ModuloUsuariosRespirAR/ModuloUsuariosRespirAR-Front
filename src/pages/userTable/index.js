@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+
+import { useAuth } from "../../context/UserContext";
 
 import MUIDataTable from "mui-datatables";
-import { IconButton, Grid, Card, Button, Box } from "@mui/material";
+import { IconButton, Grid, Card, Button, Switch, Alert } from "@mui/material";
+import InfoIcon from "@mui/icons-material/Info";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
@@ -12,6 +15,25 @@ import { useNavigate } from "react-router-dom";
 
 function UserTable() {
   const navigate = useNavigate();
+  const { getUsersList, userDetails, userDeletation } = useAuth();
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  let token = localStorage.getItem("Token");
+
+  const fetchUsersList = async () => {
+    if (token !== null) {
+      const result = await getUsersList(token);
+      setUsers(result.users);
+      setLoading(false);
+    } else {
+      navigate("/pages/authentication/sign-in");
+    }
+  };
+
+  useEffect(() => {
+    fetchUsersList();
+  }, []);
 
   const columns = [
     {
@@ -30,8 +52,22 @@ function UserTable() {
       label: "Email",
     },
     {
-      name: "rol",
-      label: "Rol",
+      name: "enabled",
+      options: {
+        filter: true,
+        customBodyRender: (value) => {
+          return (
+            <div>
+              <Switch checked={value} color="warning" />
+            </div>
+          );
+        },
+      },
+      label: "Habilitado",
+    },
+    {
+      name: "date_password",
+      label: "Fecha password",
     },
     {
       name: "acciones",
@@ -41,7 +77,13 @@ function UserTable() {
           return (
             <>
               <IconButton
-                aria-label="delete"
+                aria-label="info"
+                onClick={() => handleInfo(tableMeta.rowData)}
+              >
+                <InfoIcon />
+              </IconButton>
+              <IconButton
+                aria-label="edit"
                 onClick={() => handleEdit(tableMeta.rowData)}
               >
                 <EditIcon color="info" />
@@ -59,22 +101,6 @@ function UserTable() {
     },
   ];
 
-  const data = [
-    {
-      id: 1,
-      username: "FacundoCasas",
-      email: "facundo@gmail.com",
-      rol: "admin",
-    },
-    { id: 2, username: "DonLuis", email: "don@gmail.com", rol: "user" },
-    { id: 3, username: "AgustinPascal", email: "agus@gmail.com", rol: "admin" },
-    { id: 4, username: "Anakin", email: "anakin@gmail.com", rol: "admin" },
-    { id: 5, username: "Lion", email: "Lion@gmail.com", rol: "user" },
-    { id: 6, username: "kaiju", email: "kaiju@gmail.com", rol: "admin" },
-    { id: 7, username: "Dormamu", email: "Dormamu@gmail.com", rol: "user" },
-    { id: 8, username: "RickSanchez", email: "rick@gmail.com", rol: "admin" },
-  ];
-
   const options = {
     filter: true,
     selectableRows: "multiple",
@@ -88,53 +114,83 @@ function UserTable() {
     window.location.reload();
   };
 
-  const handleEdit = (rowData) => {
-    navigate("/pages/userSettings/" + `${rowData[0]}`);
+  const handleInfo = (rowData) => {
+    navigate("/pages/userDetails/" + `${rowData[0]}`);
     window.location.reload();
   };
 
-  const handleDelete = (rowData) => {
-    window.confirm(
-      "Estas seguro que deseas eliminar al Usuario: " + rowData[0] + "?"
-    );
+  const handleEdit = (rowData) => {
+    navigate("/pages/userModification/" + `${rowData[0]}`);
+    window.location.reload();
   };
 
-  return (
-    <>
-      <BaseLayout>
-        <Grid
-          container
-          justifyContent="right"
-          marginLeft="-85px"
-          marginBottom="5px"
-        >
-          <Grid item xs={0} sm={0} md={0} lg={0} xl={0}>
-            <Button
-              variant="contained"
-              color="primary"
-              size="meduim"
-              startIcon={<AddIcon />}
-              onClick={handleCreate}
-            >
-              Crear usuario
-            </Button>
-          </Grid>
-        </Grid>
-        <Grid container spacing={1} justifyContent="center" alignItems="center">
-          <Grid item xs={11} sm={9} md={5} lg={11} xl={0}>
-            <Card>
-              <MUIDataTable
-                columns={columns}
-                data={data}
-                options={options}
-                title="Usuarios"
-              />
-            </Card>
-          </Grid>
-        </Grid>
-      </BaseLayout>
-    </>
-  );
+  const handleDelete = async (rowData) => {
+    let confirm = window.confirm(
+      "Está seguro que desea eliminar al Usuario: " + rowData[1] + "?"
+    );
+
+    try {
+      if (token !== null && confirm) {
+        const result = await userDeletation(token, rowData[0]);
+        if (result !== null) {
+          window.location.reload();
+        } else {
+        }
+      } else {
+      }
+    } catch (error) {}
+  };
+
+  if (loading) {
+    return <Alert severity="info">Data is loading...</Alert>;
+  } else {
+    return (
+      <>
+        <BaseLayout
+          children={
+            <>
+              {" "}
+              <Grid
+                container
+                justifyContent="right"
+                marginLeft="-85px"
+                marginBottom="5px"
+              >
+                <Grid item xs={0} sm={0} md={0} lg={0} xl={0}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="meduim"
+                    startIcon={<AddIcon />}
+                    onClick={handleCreate}
+                  >
+                    Crear usuario
+                  </Button>
+                </Grid>
+              </Grid>
+              <Grid
+                container
+                spacing={1}
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Grid item xs={11} sm={9} md={5} lg={11} xl={0}>
+                  <Card>
+                    <MUIDataTable
+                      columns={columns}
+                      data={users}
+                      options={options}
+                      title="Usuarios"
+                    />
+                  </Card>
+                </Grid>
+              </Grid>
+            </>
+          }
+        ></BaseLayout>
+      </>
+    );
+  }
 }
 
 export default UserTable;

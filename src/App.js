@@ -10,13 +10,18 @@ import CssBaseline from "@mui/material/CssBaseline";
 import theme from "./assets/theme";
 import Principal from "./layouts/pages/principal";
 
+import { UserProvider } from "./context/UserContext";
+
 import routes from "./routes";
 
-import UserSettings from "./layouts/pages/userSettings";
+import HomePage from "./layouts/pages/home";
+import UserDetailsPage from "./layouts/pages/userDetails";
+import UserModificationPage from "./layouts/pages/userModification";
 import SignInPage from "./layouts/pages/authentication/sign-in";
 import UserCreatePage from "./layouts/pages/userCreate";
 import RolCreatePage from "./layouts/pages/rolCreate";
-import RolSettingsPage from "./layouts/pages/rolSettings";
+import RolDetailsPage from "./layouts/pages/rolDetails";
+import RolModificationPage from "./layouts/pages/rolModification";
 
 function App() {
   const { pathname } = useLocation();
@@ -47,18 +52,31 @@ function App() {
     });
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Routes>
-        {getRoutes(routes)}
-        <Route path="/" element={<Principal />} />
-        <Route path="/pages/authentication/sign-in" element={<SignInPage />} />
-        <Route path="/pages/userSettings/:id" element={<UserSettings />} />
-        <Route path="/pages/createUser" element={<UserCreatePage />} />
-        <Route path="/pages/createRol" element={<RolCreatePage />} />
-        <Route path="/pages/rolSettings/:id" element={<RolSettingsPage />} />
-      </Routes>
-    </ThemeProvider>
+    <UserProvider>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Routes>
+          {getRoutes(routes)}
+          <Route path="/" element={<HomePage />} />
+          <Route
+            path="/pages/authentication/sign-in"
+            element={<SignInPage />}
+          />
+          <Route path="/pages/userDetails/:id" element={<UserDetailsPage />} />
+          <Route
+            path="/pages/userModification/:id"
+            element={<UserModificationPage />}
+          />
+          <Route path="/pages/createUser" element={<UserCreatePage />} />
+          <Route path="/pages/createRol" element={<RolCreatePage />} />
+          <Route path="/pages/rolDetails/:id" element={<RolDetailsPage />} />
+          <Route
+            path="/pages/rolModification/:id"
+            element={<RolModificationPage />}
+          />
+        </Routes>
+      </ThemeProvider>
+    </UserProvider>
   );
 }
 

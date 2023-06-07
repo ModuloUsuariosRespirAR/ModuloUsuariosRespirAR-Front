@@ -1,11 +1,15 @@
 import { useState, useEffect } from "react";
 
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../context/UserContext";
 
-import Card from "@mui/material/Card";
-import Grid from "@mui/material/Grid";
+import {
+  Grid,
+  Card,
+  Switch,
+  FormControlLabel,
+} from "@mui/material";
 
 import Box from "../../components/Box";
 import Typography from "../../components/Typography";
@@ -13,9 +17,19 @@ import Input from "../../components/Input";
 import Button from "../../components/Button";
 import MultipleSelectChip from "../../components/MultipleSelectChip";
 
+import { CheckBox } from "@mui/icons-material";
 import BaseLayout from "../../layouts/components/BaseLayout/BaseLayout";
 
-function UserCreate() {
+function UserSettings() {
+  function ObtenerId() {
+    let { id } = useParams();
+    return id;
+  }
+  const navigate = useNavigate();
+  const userId = ObtenerId();
+  const [userInfo, setUserInfo] = useState([]);
+  const { userDetails } = useAuth();
+
   const rolesEjemplos = [
     {
       name: "Administrator",
@@ -31,37 +45,19 @@ function UserCreate() {
     },
   ];
 
-  const navigate = useNavigate();
-  const { createNewUser, isAuthenticated } = useAuth();
-  const [displayName, setDisplayName] = useState("");
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [roles, setRoles] = useState("");
+  useEffect(() => {
+    fetchUserData();
+  }, []);
 
-  const handleChangeRol = (event, value) => {
-    setRoles(value);
+  const fetchUserData = async () => {
+    let token = localStorage.getItem("Token");
+    const result = await userDetails(token, userId);
+    setUserInfo(result.user);
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    let token = localStorage.getItem("Token");
-    try {
-      if (token !== null) {
-        const result = await createNewUser(
-          token,
-          displayName,
-          username,
-          email,
-          password
-        );
-        if (result !== null) {
-          navigate("/pages/usuarios");
-        } else {
-        }
-      } else {
-      }
-    } catch (error) {}
+  const handleEdit = (event) => {
+    navigate("/pages/userModification/" + userId);
+    window.location.reload();
   };
 
   return (
@@ -94,7 +90,7 @@ function UserCreate() {
                   color="white"
                   mt={1}
                 >
-                  Crear usuario
+                  Detalle usuario
                 </Typography>
               </Box>
               <Box pt={4} pb={3} px={3}>
@@ -102,19 +98,10 @@ function UserCreate() {
                   <Box mb={2}>
                     <Input
                       type="text"
-                      label="Display Name"
-                      fullWidth
-                      value={displayName}
-                      onChange={(event) => setDisplayName(event.target.value)}
-                    />
-                  </Box>
-                  <Box mb={2}>
-                    <Input
-                      type="text"
                       label="Username"
                       fullWidth
-                      value={username}
-                      onChange={(event) => setUsername(event.target.value)}
+                      value={userInfo.username || ""}
+                      disabled
                     />
                   </Box>
                   <Box mb={2}>
@@ -122,38 +109,47 @@ function UserCreate() {
                       type="email"
                       label="Email"
                       fullWidth
-                      value={email}
-                      onChange={(event) => setEmail(event.target.value)}
+                      value={userInfo.email || ""}
+                      disabled
                     />
                   </Box>
-                  <Box mb={2}>
-                    <Input
-                      type="password"
-                      label="Contraseña"
-                      fullWidth
-                      value={password}
-                      onChange={(event) => setPassword(event.target.value)}
-                    />
-                  </Box>
-                </Box>
-                <Box>
                   <Box mb={2}>
                     <MultipleSelectChip
                       options={rolesEjemplos}
                       label="Roles"
                       placeholder="Seleccione uno o más roles"
-                      onChange={handleChangeRol}
+                      disabled="true"
                     />
                   </Box>
+                  <Box mb={2}>
+                    <FormControlLabel
+                      label="Habilitado"
+                      disabled="true"
+                      control={
+                        <Switch checked={userInfo.enabled} color="warning" />
+                      }
+                    />
+                  </Box>
+                </Box>
+                <Box display="flex" alignItems="center" ml={0}>
+                  <CheckBox disabled />
+                  <Typography
+                    variant="button"
+                    fontWeight="regular"
+                    color="text"
+                    sx={{ cursor: "pointer", userSelect: "none", ml: -1 }}
+                  >
+                    &nbsp;&nbsp;Cuenta Verificada
+                  </Typography>
                 </Box>
                 <Box mt={4} mb={1}>
                   <Button
                     variant="gradient"
                     color="info"
                     fullWidth
-                    onClick={handleSubmit}
+                    onClick={handleEdit}
                   >
-                    Guardar
+                    Editar
                   </Button>
                 </Box>
               </Box>
@@ -165,4 +161,4 @@ function UserCreate() {
   );
 }
 
-export default UserCreate;
+export default UserSettings;

@@ -1,14 +1,12 @@
 import { useState } from "react";
 
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+import { useAuth } from "../../../context/UserContext";
 
 import Card from "@mui/material/Card";
 import Switch from "@mui/material/Switch";
 import Grid from "@mui/material/Grid";
-import MuiLink from "@mui/material/Link";
-
-import FacebookIcon from "@mui/icons-material/Facebook";
-import GoogleIcon from "@mui/icons-material/Google";
 
 import Box from "../../../components/Box";
 import Typography from "../../../components/Typography";
@@ -18,9 +16,36 @@ import Button from "../../../components/Button";
 import BaseLayout from "../../../layouts/components/BaseLayout/BaseLayout";
 
 function SignInBasic() {
+  const url = "http://localhost:8000/login";
+  const navigate = useNavigate();
+
+  const { loginUsuario } = useAuth();
+
   const [rememberMe, setRememberMe] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
+
+  const handleUsernameChange = (event) => {
+    setUsername(event.target.value);
+  };
+
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const result = await loginUsuario(username, password);
+      if (result === null) {
+        alert("No se pudo loguear");
+      } else {
+        navigate("/pages/usuarios");
+      }
+    } catch (error) {}
+  };
 
   return (
     <>
@@ -54,41 +79,24 @@ function SignInBasic() {
                 >
                   Sign in
                 </Typography>
-                <Grid
-                  container
-                  spacing={3}
-                  justifyContent="center"
-                  sx={{ mt: 1, mb: 2 }}
-                >
-                  <Grid item xs={2}>
-                    <Typography
-                      component={MuiLink}
-                      href="#"
-                      variant="body1"
-                      color="white"
-                    >
-                      <FacebookIcon color="inherit" />
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={2}>
-                    <Typography
-                      component={MuiLink}
-                      href="#"
-                      variant="body1"
-                      color="white"
-                    >
-                      <GoogleIcon color="inherit" />
-                    </Typography>
-                  </Grid>
-                </Grid>
               </Box>
               <Box pt={4} pb={3} px={3}>
                 <Box component="form" role="form">
                   <Box mb={2}>
-                    <Input type="email" label="Email" fullWidth />
+                    <Input
+                      type="email"
+                      label="Email"
+                      fullWidth
+                      onChange={handleUsernameChange}
+                    />
                   </Box>
                   <Box mb={2}>
-                    <Input type="password" label="Password" fullWidth />
+                    <Input
+                      type="password"
+                      label="Password"
+                      fullWidth
+                      onChange={handlePasswordChange}
+                    />
                   </Box>
                   <Box display="flex" alignItems="center" ml={-1}>
                     <Switch
@@ -106,24 +114,14 @@ function SignInBasic() {
                     </Typography>
                   </Box>
                   <Box mt={4} mb={1}>
-                    <Button variant="gradient" color="info" fullWidth>
+                    <Button
+                      onClick={handleSubmit}
+                      variant="gradient"
+                      color="info"
+                      fullWidth
+                    >
                       sign in
                     </Button>
-                  </Box>
-                  <Box mt={3} mb={1} textAlign="center">
-                    <Typography variant="button" color="text">
-                      Don&apos;t have an account?{" "}
-                      <Typography
-                        component={Link}
-                        to="/authentication/sign-up/cover"
-                        variant="button"
-                        color="info"
-                        fontWeight="medium"
-                        textGradient
-                      >
-                        Sign up
-                      </Typography>
-                    </Typography>
                   </Box>
                 </Box>
               </Box>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
@@ -13,7 +13,7 @@ import MultipleSelectChip from "../../components/MultipleSelectChip";
 
 import BaseLayout from "../../layouts/components/BaseLayout/BaseLayout";
 
-function RolSettings() {
+function RolDetails() {
   function ObtenerId() {
     let { id } = useParams();
     return id;
@@ -21,7 +21,7 @@ function RolSettings() {
   const id = ObtenerId();
   const url = "Agregar URL para obtener el rol con ese Id" + id;
   const [rol, setRol] = useState([]);
-  const [permisos, setPermisos] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchData() {
@@ -61,14 +61,9 @@ function RolSettings() {
     },
   ];
 
-  const handleChangePermisos = (event, value) => {
-    setPermisos(value);
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log("Rol:", rol);
-    console.log("Permisos:", permisos);
+  const handleEdit = (event) => {
+    navigate("/pages/rolModification/" + id);
+    window.location.reload();
   };
 
   return (
@@ -102,7 +97,7 @@ function RolSettings() {
                     color="white"
                     mt={1}
                   >
-                    Crear rol
+                    Detalle rol
                   </Typography>
                 </Box>
                 <Box pt={4} pb={3} px={3}>
@@ -113,7 +108,7 @@ function RolSettings() {
                         label="Rol"
                         fullWidth
                         value={rol}
-                        onChange={(event) => setRol(event.target.value)}
+                        disabled
                       />
                     </Box>
                   </Box>
@@ -123,7 +118,7 @@ function RolSettings() {
                         options={permisosEjemplos}
                         label="Permisos"
                         placeholder="Seleccione uno o más permisos"
-                        onChange={handleChangePermisos}
+                        disabled="true"
                       />
                     </Box>
                   </Box>
@@ -132,9 +127,9 @@ function RolSettings() {
                       variant="gradient"
                       color="info"
                       fullWidth
-                      onClick={handleSubmit}
+                      onClick={handleEdit}
                     >
-                      Guardar
+                      Editar
                     </Button>
                   </Box>
                 </Box>
@@ -147,4 +142,4 @@ function RolSettings() {
   );
 }
 
-export default RolSettings;
+export default RolDetails;

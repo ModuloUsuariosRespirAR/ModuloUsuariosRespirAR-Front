@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
 
+import { createRol } from "../../services/RolService";
+
+import { useNavigate } from "react-router-dom";
+
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 
@@ -14,6 +18,8 @@ import BaseLayout from "../../layouts/components/BaseLayout/BaseLayout";
 function RolCreate() {
   const [rol, setRol] = useState("");
   const [permisos, setPermisos] = useState("");
+  const navigate = useNavigate();
+  let token = localStorage.getItem("Token");
 
   const permisosEjemplos = [
     {
@@ -34,10 +40,12 @@ function RolCreate() {
     },
   ];
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Rol:", rol);
-    console.log("Permisos:", permisos);
+    if (token !== null) {
+      await createRol(token, rol);
+      navigate("/pages/roles");
+    }
   };
 
   const handleChangePermisos = (event, value) => {

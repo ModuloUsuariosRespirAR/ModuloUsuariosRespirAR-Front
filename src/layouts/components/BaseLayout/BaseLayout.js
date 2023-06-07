@@ -1,11 +1,9 @@
 import PropTypes from "prop-types";
 
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
+import { useAuth } from "../../../context/UserContext";
+import { useNavigate } from "react-router-dom";
 
 import Box from "../../../components/Box";
-import Typography from "../../../components/Typography";
-
 import DefaultNavbar from "../../../components/NavBar/DefaultNavBar";
 import CenteredFooter from "../../../components/Footer/CenteredFooter";
 
@@ -15,6 +13,14 @@ import routes from "../../../routes";
 import footerRoutes from "../../../footer.routes";
 
 function BaseLayout({ children }) {
+  const { user, isAuthenticated, logOut } = useAuth();
+  const navigate = useNavigate();
+
+  const logOutOnClick = () => {
+    logOut();
+    navigate("/");
+  };
+
   return (
     <Box
       display="flex"
@@ -43,18 +49,35 @@ function BaseLayout({ children }) {
           backgroundRepeat: "no-repeat",
         }}
       >
-        <Box bgColor="white" shadow="sm" py={0}>
-          <DefaultNavbar
-            routes={routes}
-            action={{
-              name: "sign in",
-              route: "/pages/authentication/sign-in",
-              label: "Iniciar sesión",
-            }}
-            sticky
-          />
+        {isAuthenticated ? (
+          <Box bgColor="white" shadow="sm" py={0}>
+            <DefaultNavbar
+              routes={routes}
+              action={{
+                name: "log out",
+                route: "",
+                label: "Cerrar sesión",
+              }}
+              sticky
+            />
+          </Box>
+        ) : (
+          <Box bgColor="white" shadow="sm" py={0}>
+            <DefaultNavbar
+              routes={routes}
+              action={{
+                name: "sign in",
+                route: "/pages/authentication/sign-in",
+                label: "Iniciar sesión",
+              }}
+              sticky
+            />
+          </Box>
+        )}
+
+        <Box sx={{ mt: 10 }} justifyContent="center">
+          {children}
         </Box>
-        <Box sx={{ mt: 10 }}>{children}</Box>
       </Box>
       <Box mt="auto">
         <CenteredFooter content={footerRoutes} />

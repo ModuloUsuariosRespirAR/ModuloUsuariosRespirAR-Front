@@ -7,6 +7,7 @@ export default function MultipleSelectChip({
   label,
   placeholder,
   onChange,
+  disabled,
 }) {
   return (
     <Autocomplete
@@ -20,6 +21,7 @@ export default function MultipleSelectChip({
       )}
       onChange={onChange}
       isOptionEqualToValue={(option, value) => option.id === value.id}
+      disabled={disabled}
     />
   );
 }

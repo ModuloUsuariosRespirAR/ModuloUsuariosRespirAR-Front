@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
-import Card from "@mui/material/Card";
-import Grid from "@mui/material/Grid";
+import { useAuth } from "../../context/UserContext";
+
+import { Card, Grid, FormControlLabel, Switch } from "@mui/material";
 
 import Box from "../../components/Box";
 import Typography from "../../components/Typography";
@@ -14,14 +15,20 @@ import MultipleSelectChip from "../../components/MultipleSelectChip";
 import { CheckBox } from "@mui/icons-material";
 import BaseLayout from "../../layouts/components/BaseLayout/BaseLayout";
 
-function UserSettings() {
+function UserModification() {
   function ObtenerId() {
     let { id } = useParams();
     return id;
   }
-  const id = ObtenerId();
-  const url = "Agregar URL para obtener el usuario con ese Id" + id;
+  const userId = ObtenerId();
+
+  const navigate = useNavigate();
+
   const [userInfo, setUserInfo] = useState([]);
+  const { userModification, userDetails } = useAuth();
+  const [username, setUsername] = useState({});
+  const [habilitado, setHabilitado] = useState(false);
+  const [roles, setRoles] = useState("");
 
   const rolesEjemplos = [
     {
@@ -39,33 +46,37 @@ function UserSettings() {
   ];
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        response.json().then((data) => {
-          setUserInfo(data);
-        });
-      } catch (err) {
-        console.error(err);
-      }
-    }
-    fetchData();
+    fetchUserData();
   }, []);
 
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [roles, setRoles] = useState("");
+  const fetchUserData = async () => {
+    let token = localStorage.getItem("Token");
+    if (token !== null) {
+      const result = await userDetails(token, userId);
+      setUserInfo(result.user);
+    }
+  };
 
-  const handleSubmit = (event) => {
+  const handleChange = (event) => {
+    setUserInfo({ ...userInfo, [event.target.username]: event.target.value });
+  };
+
+  const handleSubmit = async (event) => {
+    let token = localStorage.getItem("Token");
     event.preventDefault();
-    console.log("Username:", username);
-    console.log("Email:", email);
-    console.log("Roles:", roles);
+
+    try {
+      if (token !== null) {
+        const result = await userModification(token, userId, username);
+        if (result !== null) {
+          navigate("/pages/usuarios");
+        } else {
+          console.log("Hubo un error al crear el usuario");
+        }
+      } else {
+        console.log("El usuario debe iniciar sesión");
+      }
+    } catch (error) {}
   };
 
   return (
@@ -107,9 +118,10 @@ function UserSettings() {
                     <Input
                       type="text"
                       label="Username"
+                      name="username"
                       fullWidth
                       value={userInfo.username}
-                      onChange={(event) => setUsername(event.target.value)}
+                      onChange={handleChange}
                     />
                   </Box>
                   <Box mb={2}>
@@ -117,8 +129,8 @@ function UserSettings() {
                       type="email"
                       label="Email"
                       fullWidth
-                      value={userInfo.email}
-                      onChange={(event) => setEmail(event.target.value)}
+                      value={userInfo.email || ""}
+                      disabled
                     />
                   </Box>
                   <Box mb={2}>
@@ -127,6 +139,20 @@ function UserSettings() {
                       label="Roles"
                       placeholder="Seleccione uno o más roles"
                       onChange={(event, value) => setRoles(value)}
+                    />
+                  </Box>
+                  <Box mb={2}>
+                    <FormControlLabel
+                      label="Habilitado"
+                      control={
+                        <Switch
+                          color="warning"
+                          checked={habilitado}
+                          onChange={(event, value) =>
+                            setHabilitado(event.target.checked)
+                          }
+                        />
+                      }
                     />
                   </Box>
                 </Box>
@@ -160,4 +186,4 @@ function UserSettings() {
   );
 }
 
-export default UserSettings;
+export default UserModification;
