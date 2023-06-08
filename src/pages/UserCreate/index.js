@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../context/UserContext";
+import { getRoles, assignRol } from "../../services/RolService";
 
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
@@ -16,20 +17,20 @@ import MultipleSelectChip from "../../components/MultipleSelectChip";
 import BaseLayout from "../../layouts/components/BaseLayout/BaseLayout";
 
 function UserCreate() {
-  const rolesEjemplos = [
-    {
-      name: "Administrator",
-      id: 1,
-    },
-    {
-      name: "No admin",
-      id: 2,
-    },
-    {
-      name: "Sin permisos",
-      id: 3,
-    },
-  ];
+  // const rolesEjemplos = [
+  //   {
+  //     name: "Administrator",
+  //     id: 1,
+  //   },
+  //   {
+  //     name: "No admin",
+  //     id: 2,
+  //   },
+  //   {
+  //     name: "Sin permisos",
+  //     id: 3,
+  //   },
+  // ];
 
   const navigate = useNavigate();
   const { createNewUser, isAuthenticated } = useAuth();
@@ -38,6 +39,16 @@ function UserCreate() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [roles, setRoles] = useState("");
+  const [rolesBase, setRolesBase] = useState("");
+  let token = localStorage.getItem("Token");
+
+  useEffect(() => {
+    async function fetchData() {
+      const result = await getRoles(token);
+      setRolesBase(result.roles);
+    }
+    fetchData();
+  }, []);
 
   const handleChangeRol = (event, value) => {
     setRoles(value);
@@ -45,18 +56,21 @@ function UserCreate() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    let token = localStorage.getItem("Token");
     try {
-      if (token !== null) {
-        const result = await createNewUser(
+      if (isAuthenticated && token !== null) {
+        const user = await createNewUser(
           token,
           displayName,
           username,
           email,
           password
         );
-        if (result !== null) {
-          navigate("/pages/usuarios");
+
+        if (user !== null) {
+          roles.map(async (rol) => {
+            await assignRol(token, user.user.id, rol.id);
+          });
+          navigate("/pages/users");
         } else {
         }
       } else {
@@ -139,7 +153,7 @@ function UserCreate() {
                 <Box>
                   <Box mb={2}>
                     <MultipleSelectChip
-                      options={rolesEjemplos}
+                      options={rolesBase}
                       label="Roles"
                       placeholder="Seleccione uno o más roles"
                       onChange={handleChangeRol}

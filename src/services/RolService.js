@@ -137,4 +137,39 @@ const deleteRol = async (token, rolId) => {
   }
 };
 
-export { getRoles, createRol, editRol, deleteRol };
+const assignRol = async (token, userId, rolId) => {
+  const result = await axios
+    .put(
+      HOST_URL + "/roles/assign",
+      { rolId: rolId, userId: userId },
+      {
+        headers: {
+          "X-Auth-token": token,
+          "Content-Type": "application/json",
+        },
+      }
+    )
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      if (error.response) {
+        return {
+          error: {
+            statusCode: error.response.status,
+            message: error.response.data.error.message,
+          },
+        };
+      } else {
+        return {
+          error: {
+            statusCode: 500,
+            message: "Keyrock connection failed",
+          },
+        };
+      }
+    });
+  return result;
+};
+
+export { getRoles, createRol, editRol, deleteRol, assignRol };

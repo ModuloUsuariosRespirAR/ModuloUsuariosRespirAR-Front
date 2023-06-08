@@ -52,7 +52,7 @@ export const UserProvider = ({ children }) => {
       password
     );
     if (createdUser != null) {
-      console.log("Usuario creado", createdUser);
+      return createdUser;
     } else {
       return null;
     }

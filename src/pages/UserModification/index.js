@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../context/UserContext";
+import { getRoles, assignRol } from "../../services/RolService";
 
 import { Card, Grid, FormControlLabel, Switch } from "@mui/material";
 
@@ -33,51 +34,69 @@ function UserModification() {
   const { userModification, userDetails } = useAuth();
   const [habilitado, setHabilitado] = useState(false);
   const [roles, setRoles] = useState("");
+  const [rolesBase, setRolesBase] = useState("");
+  let token = localStorage.getItem("Token");
 
-  const rolesEjemplos = [
-    {
-      name: "Administrator",
-      id: 1,
-    },
-    {
-      name: "No admin",
-      id: 2,
-    },
-    {
-      name: "Sin permisos",
-      id: 3,
-    },
-  ];
+  // const rolesEjemplos = [
+  //   {
+  //     name: "Administrator",
+  //     id: 1,
+  //   },
+  //   {
+  //     name: "No admin",
+  //     id: 2,
+  //   },
+  //   {
+  //     name: "Sin permisos",
+  //     id: 3,
+  //   },
+  // ];
 
   useEffect(() => {
+    async function fetchUserData() {
+      if (token !== null) {
+        const result = await userDetails(token, userId);
+        setUserInfo(result.user);
+      }
+    }
     fetchUserData();
   }, []);
 
-  const fetchUserData = async () => {
-    let token = localStorage.getItem("Token");
-    if (token !== null) {
-      const result = await userDetails(token, userId);
-      setUserInfo(result.user);
+  useEffect(() => {
+    async function fetchData() {
+      const result = await getRoles(token);
+      setRolesBase(result.roles);
     }
-  };
+    fetchData();
+  }, []);
 
   const handleChange = (event) => {
-    setUserInfo((ui) => ({ ...ui, username: event.target.value }));
+    setUserInfo((ui) => ({
+      ...ui,
+      username: event.target.value,
+      roles: event.target.value,
+    }));
+  };
+
+  const handleChangeRol = (event, value) => {
+    setRoles(value);
   };
 
   const handleSubmit = async (event) => {
-    let token = localStorage.getItem("Token");
     event.preventDefault();
 
-    console.log("Entra al guardar");
+    roles.map(async (rol) => {
+      await assignRol(token, userId, rol.id);
+    });
+    navigate("/pages/users");
 
     try {
       if (token !== null) {
         const result = await userModification(token, userId, userInfo.username);
+        console.log("Resultado", result);
         if (result !== null) {
-          navigate("/pages/usuarios");
         } else {
-          console.log("Hubo un error al crear el usuario");
+          console.log("Hubo un error al modificar el usuario");
         }
       } else {
         console.log("El usuario debe iniciar sesión");
@@ -141,10 +160,10 @@ function UserModification() {
                   </Box>
                   <Box mb={2}>
                     <MultipleSelectChip
-                      options={rolesEjemplos}
+                      options={rolesBase}
                       label="Roles"
                       placeholder="Seleccione uno o más roles"
-                      onChange={(event, value) => setRoles(value)}
+                      onChange={handleChangeRol}
                     />
                   </Box>
                   <Box mb={2}>
