@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useAuth } from "../../context/UserContext";
 
 import MUIDataTable from "mui-datatables";
 import { IconButton, Grid, Card, Button, Alert } from "@mui/material";
@@ -19,21 +20,19 @@ function RolTable() {
   let token = localStorage.getItem("Token");
   const [roles, setRoles] = useState("");
   const [loading, setLoading] = useState(true);
-
-  const fetchRolesList = async () => {
-    setLoading(true);
-    if (token !== null) {
-      const result = await getRoles(token);
-      setRoles(result.roles);
-      setLoading(false);
-      console.log("Roles", roles);
-    } else {
-      navigate("/pages/authentication/sign-in");
-    }
-  };
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
-    fetchRolesList();
+    async function fetchData() {
+      if (isAuthenticated) {
+        const result = await getRoles(token);
+        setRoles(result.roles);
+        setLoading(false);
+      } else {
+        navigate("/pages/authentication/sign-in");
+      }
+    }
+    fetchData();
   }, []);
 
   const columns = [
@@ -95,29 +94,27 @@ function RolTable() {
 
   const handleInfo = (rowData) => {
     navigate("/pages/rolDetails/" + `${rowData[0]}`);
-    window.location.reload();
   };
 
   const handleCreate = () => {
     navigate("/pages/createRol");
-    window.location.reload();
   };
 
   const handleEdit = (rowData) => {
     navigate("/pages/rolModification/" + `${rowData[0]}`);
-    window.location.reload();
   };
 
   const handleDelete = async (rowData) => {
     let confirm = window.confirm(
-      "Está seguro que desea eliminar al Usuario: " + rowData[1] + "?"
+      "Está seguro que desea eliminar el rol: " + rowData[1] + "?"
     );
 
     try {
       if (token !== null && confirm) {
-        const result = await deleteRol(token, rowData[0]);
+        let id = rowData[0];
+        const result = await deleteRol(token, id);
         if (result !== null) {
-          window.location.reload();
+          setRoles((roles) => roles.filter((r) => r.id !== id));
         } else {
         }
       } else {

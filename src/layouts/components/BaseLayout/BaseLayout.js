@@ -11,11 +11,11 @@ import bgImage from "../../../assets/images/smartcity.jpg";
 
 import routes from "../../../routes";
 import footerRoutes from "../../../footer.routes";
-import { useEffect } from "react";
 
 function BaseLayout({ children }) {
-  const { user, isAuthenticated } = useAuth();
-  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+
+  let token = localStorage.getItem("Access");
 
   return (
     <>
@@ -47,7 +47,7 @@ function BaseLayout({ children }) {
             backgroundRepeat: "no-repeat",
           }}
         >
-          {isAuthenticated ? (
+          {isAuthenticated && token ? (
             <Box bgColor="white" shadow="sm" py={0}>
               <DefaultNavbar
                 routes={routes}

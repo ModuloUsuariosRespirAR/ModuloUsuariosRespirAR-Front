@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 
 import { useAuth } from "../../context/UserContext";
+import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
+import Moment from "moment";
+import dateFormat from "dateformat";
 
 import MUIDataTable from "mui-datatables";
 import { IconButton, Grid, Card, Button, Switch, Alert } from "@mui/material";
@@ -11,29 +15,56 @@ import AddIcon from "@mui/icons-material/Add";
 
 import BaseLayout from "../../layouts/components/BaseLayout/BaseLayout";
 
-import { useNavigate } from "react-router-dom";
-
 function UserTable() {
   const navigate = useNavigate();
-  const { getUsersList, userDetails, userDeletation } = useAuth();
+  const { isAuthenticated, getUsersList, userDeletation } = useAuth();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   let token = localStorage.getItem("Token");
 
-  const fetchUsersList = async () => {
-    if (token !== null) {
-      const result = await getUsersList(token);
-      setUsers(result.users);
-      setLoading(false);
-    } else {
-      navigate("/pages/authentication/sign-in");
-    }
-  };
-
   useEffect(() => {
+    async function fetchUsersList() {
+      if (isAuthenticated) {
+        const result = await getUsersList(token);
+        setUsers(result.users);
+        setLoading(false);
+      } else {
+        navigate("/pages/authentication/sign-in");
+      }
+    }
     fetchUsersList();
   }, []);
+
+  const handleCreate = () => {
+    navigate("/pages/createUser");
+  };
+
+  const handleInfo = (rowData) => {
+    navigate("/pages/userDetails/" + `${rowData[0]}`);
+  };
+
+  const handleEdit = (rowData) => {
+    navigate("/pages/userModification/" + `${rowData[0]}`);
+  };
+
+  const handleDelete = async (rowData) => {
+    let confirm = window.confirm(
+      "Está seguro que desea eliminar el usuario: " + rowData[1] + "?"
+    );
+    try {
+      if (isAuthenticated && confirm) {
+        let id = rowData[0];
+        const result = await userDeletation(token, id);
+        if (result !== null) {
+          setUsers((users) => users.filter((u) => u.id !== id));
+        } else {
+          navigate("/pages/authentication/sign-in");
+        }
+      } else {
+      }
+    } catch (error) {}
+  };
 
   const columns = [
     {
@@ -68,6 +99,16 @@ function UserTable() {
     {
       name: "date_password",
       label: "Fecha password",
+      options: {
+        customRowRender: ({ value }) => {
+          if (value) {
+            console.log("value", value);
+            Moment(value, "mmmm dS, yyyy");
+          } else {
+            value = "N/A";
+          }
+        },
+      },
     },
     {
       name: "acciones",
@@ -107,35 +148,6 @@ function UserTable() {
     filterType: "dropdown",
     responsive: "vertical",
     rowsPerPage: 10,
-  };
-
-  const handleCreate = () => {
-    navigate("/pages/createUser");
-  };
-
-  const handleInfo = (rowData) => {
-    navigate("/pages/userDetails/" + `${rowData[0]}`);
-  };
-
-  const handleEdit = (rowData) => {
-    navigate("/pages/userModification/" + `${rowData[0]}`);
-  };
-
-  const handleDelete = async (rowData) => {
-    let confirm = window.confirm(
-      "Está seguro que desea eliminar al Usuario: " + rowData[1] + "?"
-    );
-    try {
-      if (token !== null && confirm) {
-        let id = rowData[0];
-        const result = await userDeletation(token, id);
-        if (result !== null) {
-          setUsers((users) => users.filter((u) => u.id !== id));
-        } else {
-        }
-      } else {
-      }
-    } catch (error) {}
   };
 
   if (loading) {

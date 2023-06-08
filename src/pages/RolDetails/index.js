@@ -63,7 +63,6 @@ function RolDetails() {
 
   const handleEdit = (event) => {
     navigate("/pages/rolModification/" + id);
-    window.location.reload();
   };
 
   return (

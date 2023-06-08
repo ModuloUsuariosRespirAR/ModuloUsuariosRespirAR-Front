@@ -15,7 +15,7 @@ const routes = [
         collapse: [
           {
             name: "Lista de usuarios",
-            route: "/pages/usuarios",
+            route: "/pages/users",
             component: <UserTablePage />,
           },
         ],

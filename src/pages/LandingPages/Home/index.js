@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 
 import { Grid, Box, Link, Container } from "@mui/material";
 
@@ -15,7 +15,7 @@ const cards = [
       {
         image: users,
         name: "Lista de usuarios",
-        route: "/pages/usuarios",
+        route: "/pages/users",
       },
       {
         image: roles,
@@ -36,7 +36,7 @@ function DesignBlocks() {
         <Grid container style={{ gap: 200 }} spacing={5} minHeight="70px">
           {items.map(({ image, name, route }) => (
             <Grid item xs={12} md={4} sx={{ mb: 2 }} key={name}>
-              <Link href={route}>
+              <Link component={RouterLink} to={route}>
                 <Card image={image} name={name} />
               </Link>
             </Grid>
