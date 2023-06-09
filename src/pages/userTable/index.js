@@ -25,7 +25,7 @@ function UserTable() {
 
   useEffect(() => {
     async function fetchUsersList() {
-      if (isAuthenticated) {
+      if (isAuthenticated && token) {
         const result = await getUsersList(token);
         setUsers(result.users);
         setLoading(false);

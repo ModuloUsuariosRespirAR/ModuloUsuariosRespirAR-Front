@@ -29,6 +29,36 @@ const getRoles = async (token) => {
   return result;
 };
 
+const getRol = async (rolId, token) => {
+  const result = await axios
+    .get(`${this.baseUrl}/v1/applications/${this.appId}/roles/${rolId}`, {
+      headers: {
+        "X-Auth-token": token,
+      },
+    })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      if (error.response) {
+        return {
+          error: {
+            statusCode: error.response.status,
+            message: error.response.data.error.message,
+          },
+        };
+      } else {
+        return {
+          error: {
+            statusCode: 500,
+            message: "Keyrock connection failed",
+          },
+        };
+      }
+    });
+  return result;
+};
+
 const createRol = async (token, rolname) => {
   const result = await axios
     .post(
@@ -172,4 +202,4 @@ const assignRol = async (token, userId, rolId) => {
   return result;
 };
 
-export { getRoles, createRol, editRol, deleteRol, assignRol };
+export { getRoles, getRol, createRol, editRol, deleteRol, assignRol };

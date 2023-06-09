@@ -61,6 +61,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route
             path="/pages/authentication/sign-in"
+            
             element={<SignInPage />}
           />
           <Route path="/pages/userDetails/:id" element={<UserDetailsPage />} />
