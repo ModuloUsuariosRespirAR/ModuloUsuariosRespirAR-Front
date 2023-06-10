@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { detailRol, editRol } from "../../services/RolService";
 
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
+import Alert from "@mui/material/Alert";
 
 import Box from "../../components/Box";
 import Typography from "../../components/Typography";
@@ -18,28 +20,23 @@ function RolModification() {
     let { id } = useParams();
     return id;
   }
-  const id = ObtenerId();
-  const url = "Agregar URL para obtener el rol con ese Id" + id;
-  const [rol, setRol] = useState([]);
+  const rolId = ObtenerId();
+  let token = localStorage.getItem("Token");
+  const navigate = useNavigate();
+
+  const [rol, setRol] = useState({
+    name: "",
+  });
   const [permisos, setPermisos] = useState("");
+  const [alert, setAlert] = useState(false);
+  const [alertContent, setAlertContent] = useState("");
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        response.json().then((data) => {
-          setRol(data);
-        });
-      } catch (err) {
-        console.error(err);
-      }
+    async function fetchUserData() {
+      const result = await detailRol(rolId, token);
+      setRol(result.role);
     }
-    fetchData();
+    fetchUserData();
   }, []);
 
   const permisosEjemplos = [
@@ -61,18 +58,41 @@ function RolModification() {
     },
   ];
 
-  const handleChangePermisos = (event, value) => {
-    setPermisos(value);
+  const handleChange = (event) => {
+    setRol((rol) => ({
+      ...rol,
+      name: event.target.value,
+    }));
   };
-
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    try {
+      const result = await editRol(token, rolId, rol.name);
+      if (!result.ok) {
+        setAlert(true);
+        setAlertContent("Error al modificar el rol");
+        throw new Error("Error al modificar el rol");
+      }
+      navigate("/pages/roles");
+    } catch (error) {}
   };
 
   return (
     <>
       <>
         <BaseLayout>
+          {alert ? (
+            <Alert
+              severity="error"
+              onClose={() => {
+                navigate("/pages/roles");
+              }}
+            >
+              {alertContent}
+            </Alert>
+          ) : (
+            <></>
+          )}
           <Grid
             container
             spacing={1}
@@ -109,9 +129,10 @@ function RolModification() {
                       <Input
                         type="text"
                         label="Rol"
+                        name="name"
                         fullWidth
-                        value={rol}
-                        onChange={(event) => setRol(event.target.value)}
+                        value={rol.name}
+                        onChange={handleChange}
                       />
                     </Box>
                   </Box>
@@ -121,7 +142,6 @@ function RolModification() {
                         options={permisosEjemplos}
                         label="Permisos"
                         placeholder="Seleccione uno o más permisos"
-                        onChange={handleChangePermisos}
                       />
                     </Box>
                   </Box>

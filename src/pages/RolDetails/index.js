@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 
 import { useParams, useNavigate } from "react-router-dom";
 
+import { detailRol } from "../../services/RolService";
+
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 
@@ -18,28 +20,17 @@ function RolDetails() {
     let { id } = useParams();
     return id;
   }
-  const id = ObtenerId();
-  const url = "Agregar URL para obtener el rol con ese Id" + id;
+  let token = localStorage.getItem("Token");
+  const rolId = ObtenerId();
   const [rol, setRol] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        response.json().then((data) => {
-          setRol(data);
-        });
-      } catch (err) {
-        console.error(err);
-      }
+    async function fetchUserData() {
+      const result = await detailRol(rolId, token);
+      setRol(result.role);
     }
-    fetchData();
+    fetchUserData();
   }, []);
 
   const permisosEjemplos = [
@@ -62,7 +53,7 @@ function RolDetails() {
   ];
 
   const handleEdit = (event) => {
-    navigate("/pages/rolModification/" + id);
+    navigate("/pages/rolModification/" + rolId);
   };
 
   return (
@@ -106,7 +97,7 @@ function RolDetails() {
                         type="text"
                         label="Rol"
                         fullWidth
-                        value={rol}
+                        value={rol.name || ""}
                         disabled
                       />
                     </Box>

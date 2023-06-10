@@ -17,21 +17,6 @@ import MultipleSelectChip from "../../components/MultipleSelectChip";
 import BaseLayout from "../../layouts/components/BaseLayout/BaseLayout";
 
 function UserCreate() {
-  // const rolesEjemplos = [
-  //   {
-  //     name: "Administrator",
-  //     id: 1,
-  //   },
-  //   {
-  //     name: "No admin",
-  //     id: 2,
-  //   },
-  //   {
-  //     name: "Sin permisos",
-  //     id: 3,
-  //   },
-  // ];
-
   const navigate = useNavigate();
   const { createNewUser, isAuthenticated } = useAuth();
   const [displayName, setDisplayName] = useState("");

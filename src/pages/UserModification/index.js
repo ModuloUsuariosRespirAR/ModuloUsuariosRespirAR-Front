@@ -5,7 +5,18 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/UserContext";
 import { getRoles, assignRol } from "../../services/RolService";
 
-import { Card, Grid, FormControlLabel, Switch } from "@mui/material";
+import {
+  Card,
+  Grid,
+  FormControlLabel,
+  Switch,
+  Alert,
+  Paper,
+  List,
+  ListItem,
+  Checkbox,
+  ListItemText,
+} from "@mui/material";
 
 import Box from "../../components/Box";
 import Typography from "../../components/Typography";
@@ -14,6 +25,7 @@ import Button from "../../components/Button";
 import MultipleSelectChip from "../../components/MultipleSelectChip";
 
 import { CheckBox } from "@mui/icons-material";
+import ListItemIcon from "@mui/material/ListItemIcon";
 import BaseLayout from "../../layouts/components/BaseLayout/BaseLayout";
 
 function UserModification() {
@@ -22,7 +34,7 @@ function UserModification() {
     return id;
   }
   const userId = ObtenerId();
-
+  let token = localStorage.getItem("Token");
   const navigate = useNavigate();
 
   const [userInfo, setUserInfo] = useState({
@@ -31,26 +43,43 @@ function UserModification() {
     roles: "",
   });
 
-  const { userModification, userDetails } = useAuth();
+  const { userModification, userDetails, userRoles } = useAuth();
   const [habilitado, setHabilitado] = useState(false);
   const [roles, setRoles] = useState("");
   const [rolesBase, setRolesBase] = useState("");
-  let token = localStorage.getItem("Token");
+  const [alert, setAlert] = useState(false);
+  const [alertContent, setAlertContent] = useState("");
+  let rolesEncontrados = [];
 
-  // const rolesEjemplos = [
-  //   {
-  //     name: "Administrator",
-  //     id: 1,
-  //   },
-  //   {
-  //     name: "No admin",
-  //     id: 2,
-  //   },
-  //   {
-  //     name: "Sin permisos",
-  //     id: 3,
-  //   },
-  // ];
+  let lista = [
+    { id: 1, name: "Uno" },
+    { id: 2, name: "Dos" },
+    { id: 3, name: "Tres" },
+  ];
+
+  useEffect(() => {
+    async function fetchData() {
+      const result = await getRoles(token);
+      setRolesBase(result.roles);
+    }
+    fetchData();
+  }, [token]);
+
+  useEffect(() => {
+    async function fetchUserRoles() {
+      let rolesUser = await userRoles(userId, token);
+      setRoles(rolesUser["role_user_assignments"]);
+    }
+    fetchUserRoles();
+  }, []);
+
+  for (let i = 0; i < roles.length; i++) {
+    for (let j = 0; j < rolesBase.length; j++) {
+      if (roles[i].role_id === rolesBase[j].id) {
+        rolesEncontrados.push(rolesBase[j]);
+      }
+    }
+  }
 
   useEffect(() => {
     async function fetchUserData() {
@@ -62,24 +91,24 @@ function UserModification() {
     fetchUserData();
   }, []);
 
-  useEffect(() => {
-    async function fetchData() {
-      const result = await getRoles(token);
-      setRolesBase(result.roles);
-    }
-    fetchData();
-  }, []);
-
   const handleChange = (event) => {
     setUserInfo((ui) => ({
       ...ui,
       username: event.target.value,
-      roles: event.target.value,
     }));
   };
 
+  const handleChangeRoles = (event) => {
+    rolesEncontrados = (rol) => ({
+      ...rol,
+
+      rolesEncontrados: event.target.value,
+    });
+  };
+
   const handleChangeRol = (event, value) => {
-    setRoles(value);
+    rolesEncontrados = value;
+    //setRoles(value);
   };
 
   const handleSubmit = async (event) => {
@@ -93,13 +122,14 @@ function UserModification() {
     try {
       if (token !== null) {
         const result = await userModification(token, userId, userInfo.username);
-        console.log("Resultado", result);
-        if (result !== null) {
-        } else {
-          console.log("Hubo un error al modificar el usuario");
+        if (!result.ok) {
+          setAlert(true);
+          setAlertContent("Error al modificar el usuario");
+          throw new Error("Error al modificar el usuario");
         }
       } else {
-        console.log("El usuario debe iniciar sesión");
+        setAlert(true);
+        setAlertContent("El usuario debe iniciar sesion");
       }
     } catch (error) {}
   };
@@ -107,6 +137,18 @@ function UserModification() {
   return (
     <>
       <BaseLayout>
+        {alert ? (
+          <Alert
+            severity="error"
+            onClose={() => {
+              navigate("/pages/roles");
+            }}
+          >
+            {alertContent}
+          </Alert>
+        ) : (
+          <></>
+        )}
         <Grid
           container
           spacing={1}
@@ -160,10 +202,11 @@ function UserModification() {
                   </Box>
                   <Box mb={2}>
                     <MultipleSelectChip
-                      options={rolesBase}
                       label="Roles"
+                      options={rolesBase}
                       placeholder="Seleccione uno o más roles"
-                      onChange={handleChangeRol}
+                      value={rolesEncontrados}
+                      onChange={handleChangeRoles}
                     />
                   </Box>
                   <Box mb={2}>

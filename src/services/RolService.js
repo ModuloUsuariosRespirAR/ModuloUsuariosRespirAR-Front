@@ -31,7 +31,7 @@ const getRoles = async (token) => {
 
 const getRol = async (rolId, token) => {
   const result = await axios
-    .get(`${this.baseUrl}/v1/applications/${this.appId}/roles/${rolId}`, {
+    .get(HOST_URL + "/roles/role/" + rolId, {
       headers: {
         "X-Auth-token": token,
       },
@@ -44,7 +44,7 @@ const getRol = async (rolId, token) => {
         return {
           error: {
             statusCode: error.response.status,
-            message: error.response.data.error.message,
+            message: error.response.message,
           },
         };
       } else {
@@ -135,6 +135,36 @@ const editRol = async (token, rolId, rolName) => {
   }
 };
 
+const detailRol = async (rolId, token) => {
+  const result = await axios
+    .get(HOST_URL + "/roles/role/" + rolId, {
+      headers: {
+        "X-Auth-token": token,
+      },
+    })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      if (error.response) {
+        return {
+          error: {
+            statusCode: error.response.status,
+            message: error.response.data.error.message,
+          },
+        };
+      } else {
+        return {
+          error: {
+            statusCode: 500,
+            message: "Keyrock connection failed",
+          },
+        };
+      }
+    });
+  return result;
+};
+
 const deleteRol = async (token, rolId) => {
   const result = await axios
     .delete(HOST_URL + "/roles/delete/" + rolId, {
@@ -202,4 +232,12 @@ const assignRol = async (token, userId, rolId) => {
   return result;
 };
 
-export { getRoles, getRol, createRol, editRol, deleteRol, assignRol };
+export {
+  getRoles,
+  getRol,
+  createRol,
+  editRol,
+  detailRol,
+  deleteRol,
+  assignRol,
+};

@@ -72,6 +72,36 @@ const getUser = async (username, password) => {
   }
 };
 
+const getUserRoles = async (userId, token) => {
+  const result = await axios
+    .get(HOST_URL + "/users/user/" + userId + "/roles", {
+      headers: {
+        "X-Auth-token": token,
+      },
+    })
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      if (error.response) {
+        return {
+          error: {
+            statusCode: error.response.status,
+            message: error.response.data.error.message,
+          },
+        };
+      } else {
+        return {
+          error: {
+            statusCode: 500,
+            message: "Keyrock connection failed",
+          },
+        };
+      }
+    });
+  return result;
+};
+
 const createUser = async (token, displayName, username, email, password) => {
   const user = {
     displayName: displayName,
@@ -234,6 +264,7 @@ const getLoguedUser = async (accessToken) => {
 export {
   getUsers,
   getUser,
+  getUserRoles,
   createUser,
   userDetail,
   userEdit,

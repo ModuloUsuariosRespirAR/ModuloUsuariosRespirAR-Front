@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import {
   getUsers,
   getUser,
+  getUserRoles,
   createUser,
   userDetail,
   userEdit,
@@ -63,6 +64,12 @@ export const UserProvider = ({ children }) => {
     return user;
   };
 
+  const userRoles = async (userId, token) => {
+    const userRoles = await getUserRoles(userId, token);
+
+    return userRoles;
+  };
+
   const userModification = async (token, userId, username) => {
     const user = await userEdit(token, userId, username);
     return user;
@@ -74,12 +81,14 @@ export const UserProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    console.count("Retrieve");
     let accessToken = localStorage.getItem("Access");
     getLoguedUser(accessToken)
       .then((user) => {
+        setIsAuthenticated(false);
         if (user) {
           setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
         }
       })
       .catch(console.error);
@@ -90,6 +99,7 @@ export const UserProvider = ({ children }) => {
       value={{
         user,
         setUser,
+        userRoles,
         isAuthenticated,
         loginUsuario,
         logOut,

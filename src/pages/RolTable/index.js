@@ -79,11 +79,6 @@ function RolTable() {
     },
   ];
 
-  const data = [
-    { id: 1, name: "Administrador" },
-    { id: 2, name: "Usuario" },
-  ];
-
   const options = {
     filter: true,
     selectableRows: "multiple",

@@ -1,15 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 import { useParams, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../context/UserContext";
+import { getRoles } from "../../services/RolService";
 
-import {
-  Grid,
-  Card,
-  Switch,
-  FormControlLabel,
-} from "@mui/material";
+import { Grid, Card, Switch, FormControlLabel } from "@mui/material";
 
 import Box from "../../components/Box";
 import Typography from "../../components/Typography";
@@ -25,35 +21,46 @@ function UserSettings() {
     let { id } = useParams();
     return id;
   }
+  let token = localStorage.getItem("Token");
   const navigate = useNavigate();
   const userId = ObtenerId();
   const [userInfo, setUserInfo] = useState([]);
-  const { userDetails } = useAuth();
-
-  const rolesEjemplos = [
-    {
-      name: "Administrator",
-      id: 1,
-    },
-    {
-      name: "No admin",
-      id: 2,
-    },
-    {
-      name: "Sin permisos",
-      id: 3,
-    },
-  ];
+  const { userDetails, userRoles } = useAuth();
+  const [rolesBase, setRolesBase] = useState([]);
+  const [roles, setRoles] = useState([]);
+  let rolesEncontrados = [];
 
   useEffect(() => {
-    fetchUserData();
+    async function fetchData() {
+      const result = await getRoles(token);
+      setRolesBase(result.roles);
+    }
+    fetchData();
+  }, [token]);
+
+  useEffect(() => {
+    async function fetchUserRoles() {
+      let rolesUser = await userRoles(userId, token);
+      setRoles(rolesUser["role_user_assignments"]);
+    }
+    fetchUserRoles();
   }, []);
 
-  const fetchUserData = async () => {
-    let token = localStorage.getItem("Token");
-    const result = await userDetails(token, userId);
-    setUserInfo(result.user);
-  };
+  for (let i = 0; i < roles.length; i++) {
+    for (let j = 0; j < rolesBase.length; j++) {
+      if (roles[i].role_id === rolesBase[j].id) {
+        rolesEncontrados.push(rolesBase[j]);
+      }
+    }
+  }
+
+  useEffect(() => {
+    async function fetchUserData() {
+      const result = await userDetails(token, userId);
+      setUserInfo(result.user);
+    }
+    fetchUserData();
+  }, []);
 
   const handleEdit = (event) => {
     navigate("/pages/userModification/" + userId);
@@ -115,9 +122,11 @@ function UserSettings() {
                   </Box>
                   <Box mb={2}>
                     <MultipleSelectChip
-                      options={rolesEjemplos}
                       label="Roles"
+                      options={rolesBase}
                       placeholder="Seleccione uno o más roles"
+                      value={rolesEncontrados}
+                      defaultValue={rolesEncontrados}
                       disabled="true"
                     />
                   </Box>
