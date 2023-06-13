@@ -1,5 +1,7 @@
 import { Link as RouterLink } from "react-router-dom";
 
+import { useAuth } from "../../../context/UserContext";
+
 import { Grid, Box, Link, Container } from "@mui/material";
 
 import Card from "../../../components/Card/Card";
@@ -8,6 +10,8 @@ import BaseLayout from "../../../layouts/components/BaseLayout/BaseLayout";
 
 import users from "../../../assets/images/users.jpeg";
 import roles from "../../../assets/images/roles.jpeg";
+import HomeSpeedDial from "../../../components/SpeedDial";
+import CenteredFooter from "../../../components/Footer/CenteredFooter";
 
 const cards = [
   {
@@ -54,19 +58,47 @@ function DesignBlocks() {
 }
 
 function Home() {
+  const { isAuthenticated } = useAuth();
+  let token = localStorage.getItem("Token");
+
   return (
     <>
       <BaseLayout
         children={
-          <Grid
-            container
-            item
-            xs={11}
-            spacing={3}
-            alignItems="center"
-            sx={{ mx: "auto" }}
-          >
-            <DesignBlocks />
+          <Grid spacing={4}>
+            <Grid
+              container
+              item
+              xs={9}
+              spacing={6}
+              alignItems="center"
+              sx={{ mx: "auto" }}
+            >
+              <DesignBlocks />
+            </Grid>
+            {isAuthenticated && token ? (
+              <Grid spacing={24}>
+                <Grid
+                  container
+                  item
+                  xs={12}
+                  alignItems="center"
+                  sx={{ mx: "auto" }}
+                  sm={24}
+                >
+                  <HomeSpeedDial />
+                </Grid>
+              </Grid>
+            ) : (
+              <Grid
+                container
+                item
+                xs={11}
+                spacing={15}
+                alignItems="center"
+                sx={{ mx: "auto" }}
+              ></Grid>
+            )}
           </Grid>
         }
       ></BaseLayout>

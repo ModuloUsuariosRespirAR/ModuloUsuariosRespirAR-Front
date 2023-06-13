@@ -31,6 +31,7 @@ export default function MultipleSelectChip({
   value,
   disabled,
   freeSolo,
+  limitTags,
 }) {
   return (
     <Autocomplete
@@ -49,6 +50,7 @@ export default function MultipleSelectChip({
       value={value}
       disabled={disabled}
       freeSolo={freeSolo}
+      limitTags={limitTags}
     />
   );
 }

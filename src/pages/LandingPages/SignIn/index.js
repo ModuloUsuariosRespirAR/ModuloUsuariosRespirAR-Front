@@ -41,7 +41,7 @@ function SignInBasic() {
       if (result === null) {
         alert("No se pudo loguear");
       } else {
-        navigate("/pages/users");
+        navigate("/");
       }
     } catch (error) {}
   };
