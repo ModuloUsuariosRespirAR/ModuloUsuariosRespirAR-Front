@@ -37,15 +37,27 @@ function UserTable() {
   }, []);
 
   const handleCreate = () => {
-    navigate("/pages/createUser");
+    if (isAuthenticated && token) {
+      navigate("/pages/createUser");
+    } else {
+      navigate("/pages/authentication/sign-in");
+    }
   };
 
   const handleInfo = (rowData) => {
-    navigate("/pages/userDetails/" + `${rowData[0]}`);
+    if (isAuthenticated && token) {
+      navigate("/pages/userDetails/" + `${rowData[0]}`);
+    } else {
+      navigate("/pages/authentication/sign-in");
+    }
   };
 
   const handleEdit = (rowData) => {
-    navigate("/pages/userModification/" + `${rowData[0]}`);
+    if (isAuthenticated && token) {
+      navigate("/pages/userModification/" + `${rowData[0]}`);
+    } else {
+      navigate("/pages/authentication/sign-in");
+    }
   };
 
   const handleDelete = async (rowData) => {

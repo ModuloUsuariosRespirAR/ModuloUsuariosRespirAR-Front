@@ -46,10 +46,12 @@ function UserSettings() {
     fetchUserRoles();
   }, []);
 
-  for (let i = 0; i < roles.length; i++) {
-    for (let j = 0; j < rolesBase.length; j++) {
-      if (roles[i].role_id === rolesBase[j].id) {
-        rolesEncontrados.push(rolesBase[j]);
+  if (roles !== "" && roles !== undefined && roles !== null) {
+    for (let i = 0; i < roles.length; i++) {
+      for (let j = 0; j < rolesBase.length; j++) {
+        if (roles[i].role_id === rolesBase[j].id) {
+          rolesEncontrados.push(rolesBase[j]);
+        }
       }
     }
   }
@@ -123,11 +125,11 @@ function UserSettings() {
                   <Box mb={2}>
                     <MultipleSelectChip
                       label="Roles"
-                      options={rolesBase}
-                      placeholder="Seleccione uno o más roles"
                       value={rolesEncontrados}
                       defaultValue={rolesEncontrados}
                       disabled="true"
+                      freeSolo="true"
+                      limitTags={3}
                     />
                   </Box>
                   <Box mb={2}>
@@ -140,7 +142,7 @@ function UserSettings() {
                     />
                   </Box>
                 </Box>
-                <Box display="flex" alignItems="center" ml={0}>
+                {/* <Box display="flex" alignItems="center" ml={0}>
                   <CheckBox disabled />
                   <Typography
                     variant="button"
@@ -150,7 +152,7 @@ function UserSettings() {
                   >
                     &nbsp;&nbsp;Cuenta Verificada
                   </Typography>
-                </Box>
+                </Box> */}
                 <Box mt={4} mb={1}>
                   <Button
                     variant="gradient"

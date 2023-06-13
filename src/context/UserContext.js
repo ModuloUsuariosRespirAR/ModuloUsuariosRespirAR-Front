@@ -82,16 +82,21 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     let accessToken = localStorage.getItem("Access");
-    getLoguedUser(accessToken)
-      .then((user) => {
-        setIsAuthenticated(false);
-        if (user) {
-          setIsAuthenticated(true);
-        } else {
+    if (accessToken) {
+      getLoguedUser(accessToken)
+        .then((user) => {
           setIsAuthenticated(false);
-        }
-      })
-      .catch(console.error);
+          if (user) {
+            console.log(user);
+            setIsAuthenticated(true);
+          } else {
+            localStorage.removeItem("Token");
+            localStorage.removeItem("Access");
+            setIsAuthenticated(false);
+          }
+        })
+        .catch(console.error);
+    }
   }, []);
 
   return (

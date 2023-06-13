@@ -2,15 +2,15 @@ import { useState, useEffect } from "react";
 
 import { useNavigate } from "react-router-dom";
 
+import validator from "validator";
+
 import { useAuth } from "../../context/UserContext";
 import { getRoles, assignRol } from "../../services/RolService";
 
-import Card from "@mui/material/Card";
-import Grid from "@mui/material/Grid";
+import { Card, Grid, TextField, Alert, Snackbar } from "@mui/material";
 
 import Box from "../../components/Box";
 import Typography from "../../components/Typography";
-import Input from "../../components/Input";
 import Button from "../../components/Button";
 import MultipleSelectChip from "../../components/MultipleSelectChip";
 
@@ -25,8 +25,39 @@ function UserCreate() {
   const [password, setPassword] = useState("");
   const [roles, setRoles] = useState("");
   const [rolesBase, setRolesBase] = useState("");
+  const [alert, setAlert] = useState(false);
+  const [alertContent, setAlertContent] = useState("");
+  const [open, setOpen] = useState(true);
+  const [emailError, setEmailError] = useState("");
   let token = localStorage.getItem("Token");
 
+  //Alerta
+  const handleClick = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  //Email
+  const validateEmail = (e) => {
+    var email = e;
+
+    if (validator.isEmail(email)) {
+      setEmailError("");
+      return true;
+    } else {
+      setEmailError("Ingresá un email válido");
+      return false;
+    }
+  };
+
+  //Roles disponibles
   useEffect(() => {
     async function fetchData() {
       const result = await getRoles(token);
@@ -39,33 +70,65 @@ function UserCreate() {
     setRoles(value);
   };
 
+  //Guardo usuario junto con sus roles
   const handleSubmit = async (event) => {
     event.preventDefault();
-    try {
-      if (isAuthenticated && token !== null) {
-        const user = await createNewUser(
-          token,
-          displayName,
-          username,
-          email,
-          password
-        );
-
-        if (user !== null) {
-          roles.map(async (rol) => {
-            await assignRol(token, user.user.id, rol.id);
-          });
-          navigate("/pages/users");
+    if (
+      username === "" ||
+      displayName === "" ||
+      email === "" ||
+      password === ""
+    ) {
+      setAlert(true);
+      setAlertContent("Debe completar todos los campos");
+      handleClick();
+    } else if (validateEmail(email)) {
+      try {
+        if (isAuthenticated && token !== null) {
+          const user = await createNewUser(
+            token,
+            displayName,
+            username,
+            email,
+            password
+          );
+          console.log("Roles", roles);
+          if (
+            roles !== null &&
+            roles !== undefined &&
+            roles !== "" &&
+            user !== null
+          ) {
+            roles.map(async (rol) => {
+              await assignRol(token, user.user.id, rol.id);
+            });
+            navigate("/pages/users");
+          } else {
+            navigate("/pages/users");
+          }
         } else {
+          navigate("/pages/authentication/sign-in");
         }
-      } else {
-      }
-    } catch (error) {}
+      } catch (error) {}
+    }
   };
 
   return (
     <>
       <BaseLayout>
+        {alert ? (
+          <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+            <Alert
+              severity="error"
+              onClose={handleClose}
+              sx={{ width: "100%" }}
+            >
+              {alertContent}
+            </Alert>
+          </Snackbar>
+        ) : (
+          <></>
+        )}
         <Grid
           container
           spacing={1}
@@ -97,64 +160,81 @@ function UserCreate() {
                 </Typography>
               </Box>
               <Box pt={4} pb={3} px={3}>
-                <Box component="form" role="form">
+                <form onSubmit={handleSubmit} className="p-3">
                   <Box mb={2}>
-                    <Input
+                    <TextField
+                      variant="outlined"
                       type="text"
                       label="Display Name"
                       fullWidth
                       value={displayName}
                       onChange={(event) => setDisplayName(event.target.value)}
+                      required
                     />
                   </Box>
                   <Box mb={2}>
-                    <Input
+                    <TextField
+                      variant="outlined"
                       type="text"
                       label="Username"
                       fullWidth
                       value={username}
                       onChange={(event) => setUsername(event.target.value)}
+                      required
                     />
                   </Box>
                   <Box mb={2}>
-                    <Input
+                    <TextField
                       type="email"
                       label="Email"
                       fullWidth
                       value={email}
                       onChange={(event) => setEmail(event.target.value)}
+                      required
+                      placeholder="mail@mail.com"
+                      helperText={emailError}
                     />
+                    {/* <span
+                      style={{
+                        fontWeight: "bold",
+                        color: "red",
+                      }}
+                    >
+                      {emailError}
+                    </span> */}
                   </Box>
                   <Box mb={2}>
-                    <Input
+                    <TextField
                       type="password"
                       label="Contraseña"
                       fullWidth
                       value={password}
                       onChange={(event) => setPassword(event.target.value)}
+                      required
                     />
                   </Box>
-                </Box>
-                <Box>
-                  <Box mb={2}>
-                    <MultipleSelectChip
-                      options={rolesBase}
-                      label="Roles"
-                      placeholder="Seleccione uno o más roles"
-                      onChange={handleChangeRol}
-                    />
+                  <Box>
+                    <Box mb={2}>
+                      <MultipleSelectChip
+                        options={rolesBase}
+                        label="Roles"
+                        placeholder="Seleccione uno o más roles"
+                        onChange={handleChangeRol}
+                      />
+                    </Box>
                   </Box>
-                </Box>
-                <Box mt={4} mb={1}>
-                  <Button
-                    variant="gradient"
-                    color="info"
-                    fullWidth
-                    onClick={handleSubmit}
-                  >
-                    Guardar
-                  </Button>
-                </Box>
+                  <Box mt={4} mb={1}>
+                    <Button
+                      type="submit"
+                      variant="gradient"
+                      color="info"
+                      fullWidth
+                      onClick={handleSubmit}
+                    >
+                      Guardar
+                    </Button>
+                  </Box>
+                </form>
               </Box>
             </Card>
           </Grid>

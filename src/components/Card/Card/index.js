@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 
-import { Button } from "@mui/material";
+import { Tooltip } from "@mui/material";
 
 import Box from "../../Box";
 import Typography from "../../Typography";
@@ -11,8 +11,8 @@ function Card({ image, name, ...rest }) {
       bgColor="#FDEFE6"
       borderRadius="xl"
       shadow="lg"
-      minHeight="20rem"
-      minWidth="30rem"
+      minHeight="10rem"
+      minWidth="20rem"
       sx={{
         overflow: "hidden",
         transform: "perspective(999px) rotateX(0deg) translate3d(0, 0, 0)",
@@ -50,18 +50,21 @@ function Card({ image, name, ...rest }) {
           </g>
         </g>
       </Box>
-      <Box
-        component="img"
-        src={image}
-        alt={name}
-        height="100%"
-        width="100%"
-        my="auto"
-      />{" "}
+      <Box component="img" src={image} alt={name} width="100%" my="auto" />
     </Box>
   );
 
-  return <Box position="relative">{imageTemplate}</Box>;
+  return (
+    <Box position="relative">
+      {" "}
+      {name ? <Tooltip>{imageTemplate}</Tooltip> : imageTemplate}
+      {name ? (
+        <Box mt={1} ml={1} lineHeight={1}>
+          {name && <Typography variant="h6" fontWeight="bold"></Typography>}
+        </Box>
+      ) : null}
+    </Box>
+  );
 }
 
 Card.defaultProps = {
