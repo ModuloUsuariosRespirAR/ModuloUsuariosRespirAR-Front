@@ -157,9 +157,29 @@ function UserTable() {
   const options = {
     filter: true,
     selectableRows: "multiple",
+    //selectableRows: "single",
     filterType: "dropdown",
     responsive: "vertical",
     rowsPerPage: 10,
+    onRowsDelete: (rowsDeleted, dataRows) => {
+      const projectsToDelete = rowsDeleted.data.map(
+        (d) => users[d.dataIndex].id
+      );
+      console.log(projectsToDelete);
+      projectsToDelete.map(async (ud) => {
+        try {
+          if (isAuthenticated) {
+            const result = await userDeletation(token, ud);
+            if (result !== null) {
+              setUsers((users) => users.filter((u) => u.id !== ud));
+            } else {
+              navigate("/pages/authentication/sign-in");
+            }
+          } else {
+          }
+        } catch (error) {}
+      });
+    },
   };
 
   if (loading) {

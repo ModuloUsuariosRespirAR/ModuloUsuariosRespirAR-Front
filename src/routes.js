@@ -28,11 +28,6 @@ const routes = [
             route: "/pages/roles",
             component: <RolTablePage />,
           },
-          {
-            name: "Lista de permisos",
-            route: "/pages/permisos",
-            component: "",
-          },
         ],
       },
     ],
