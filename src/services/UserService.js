@@ -1,5 +1,5 @@
 import axios from "axios";
-import { HOST_URL } from "../utils/util";
+import { HOST_URL, MAILER_URL } from "../utils/util";
 
 const getUsers = async (token) => {
   const result = await axios
@@ -46,7 +46,9 @@ const getUser = async (username, password) => {
     .then((res) => {
       localStorage.setItem("Token", res.data["X-Auth-token"]);
       localStorage.setItem("Access", res.data["accessToken"]);
-      return res.data;
+      let roles = res.data["user"]["roles"];
+      localStorage.setItem("Roles", JSON.stringify(roles));
+      return res.data["user"];
     })
     .catch((error) => {
       if (error.response) {
@@ -65,10 +67,10 @@ const getUser = async (username, password) => {
         };
       }
     });
-  if (result.access_token) {
-    return result.access_token;
-  } else {
+  if (result !== null) {
     return result;
+  } else {
+    return null;
   }
 };
 
@@ -102,7 +104,14 @@ const getUserRoles = async (userId, token) => {
   return result;
 };
 
-const createUser = async (token, displayName, username, email, password) => {
+const createUser = async (
+  token,
+  acessToken,
+  displayName,
+  username,
+  email,
+  password
+) => {
   const user = {
     displayName: displayName,
     username: username,
@@ -116,7 +125,7 @@ const createUser = async (token, displayName, username, email, password) => {
         user,
       },
       {
-        headers: { "X-Auth-token": token },
+        headers: { "X-Auth-token": token, accesstoken: acessToken },
       }
     )
     .then((res) => {
@@ -174,7 +183,7 @@ const userDetail = async (token, userId) => {
   return result;
 };
 
-const userEdit = async (token, userId, username) => {
+const userEdit = async (token, accessToken, userId, username) => {
   const user = {
     username: username,
   };
@@ -185,7 +194,7 @@ const userEdit = async (token, userId, username) => {
         user,
       },
       {
-        headers: { "X-Auth-token": token },
+        headers: { "X-Auth-token": token, accesstoken: accessToken },
       }
     )
     .then((res) => {
@@ -215,10 +224,10 @@ const userEdit = async (token, userId, username) => {
   }
 };
 
-const userDelete = async (token, userId) => {
+const userDelete = async (token, accessToken, userId) => {
   const result = await axios
     .delete(HOST_URL + "/users/delete/" + userId, {
-      headers: { "X-Auth-token": token },
+      headers: { "X-Auth-token": token, accesstoken: accessToken },
     })
     .then((res) => {
       return res.data;
@@ -261,6 +270,7 @@ const getLoguedUser = async (accessToken) => {
 
   return user;
 };
+
 export {
   getUsers,
   getUser,

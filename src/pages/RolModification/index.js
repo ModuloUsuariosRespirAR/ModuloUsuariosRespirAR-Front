@@ -22,6 +22,7 @@ function RolModification() {
   }
   const rolId = ObtenerId();
   let token = localStorage.getItem("Token");
+  let accessToken = localStorage.getItem("Access");
   const navigate = useNavigate();
 
   const [rol, setRol] = useState({
@@ -67,8 +68,8 @@ function RolModification() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const result = await editRol(token, rolId, rol.name);
-      if (!result.ok) {
+      const result = await editRol(token, accessToken, rolId, rol.name);
+      if (JSON.stringify(result).includes("Error")) {
         setAlert(true);
         setAlertContent("Error al modificar el rol");
         throw new Error("Error al modificar el rol");

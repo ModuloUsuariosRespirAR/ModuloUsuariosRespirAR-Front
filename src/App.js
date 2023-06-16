@@ -8,7 +8,6 @@ import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 
 import theme from "./assets/theme";
-import Principal from "./layouts/pages/principal";
 
 import { UserProvider } from "./context/UserContext";
 
@@ -23,6 +22,8 @@ import RolCreatePage from "./layouts/pages/rolCreate";
 import RolDetailsPage from "./layouts/pages/rolDetails";
 import RolModificationPage from "./layouts/pages/rolModification";
 import LogOut from "./pages/LandingPages/LogOut";
+import RecoverPassword from "./pages/LandingPages/RecoverPassword";
+import ActivateUser from "./layouts/pages/activateUser";
 
 function App() {
   const { pathname } = useLocation();
@@ -61,7 +62,6 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route
             path="/pages/authentication/sign-in"
-            
             element={<SignInPage />}
           />
           <Route path="/pages/userDetails/:id" element={<UserDetailsPage />} />
@@ -77,6 +77,8 @@ function App() {
             element={<RolModificationPage />}
           />
           <Route path="/pages/log-out" element={<LogOut />} />
+          <Route path="/pages/recover-password" element={<RecoverPassword />} />
+          <Route path="/pages/activate-user/:id" element={<ActivateUser />} />
         </Routes>
       </ThemeProvider>
     </UserProvider>

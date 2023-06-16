@@ -18,6 +18,7 @@ function RolTable() {
   const navigate = useNavigate();
 
   let token = localStorage.getItem("Token");
+  let accessToken = localStorage.getItem("Access");
   const [roles, setRoles] = useState("");
   const [loading, setLoading] = useState(true);
   const { isAuthenticated } = useAuth();
@@ -107,7 +108,7 @@ function RolTable() {
     try {
       if (token !== null && confirm) {
         let id = rowData[0];
-        const result = await deleteRol(token, id);
+        const result = await deleteRol(token, accessToken, id);
         if (result !== null) {
           setRoles((roles) => roles.filter((r) => r.id !== id));
         } else {

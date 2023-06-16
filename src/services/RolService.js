@@ -59,7 +59,7 @@ const getRol = async (rolId, token) => {
   return result;
 };
 
-const createRol = async (token, rolname) => {
+const createRol = async (token, accessToken, rolname) => {
   const result = await axios
     .post(
       HOST_URL + "/roles/create",
@@ -67,7 +67,7 @@ const createRol = async (token, rolname) => {
         rolName: rolname,
       },
       {
-        headers: { "X-Auth-token": token },
+        headers: { "X-Auth-token": token, accesstoken: accessToken },
       }
     )
     .then((res) => {
@@ -97,7 +97,7 @@ const createRol = async (token, rolname) => {
   }
 };
 
-const editRol = async (token, rolId, rolName) => {
+const editRol = async (token, accessToken, rolId, rolName) => {
   const result = await axios
     .put(
       HOST_URL + "/roles/update/" + rolId,
@@ -105,7 +105,7 @@ const editRol = async (token, rolId, rolName) => {
         rolName: rolName,
       },
       {
-        headers: { "X-Auth-token": token },
+        headers: { "X-Auth-token": token, accesstoken: accessToken },
       }
     )
     .then((res) => {
@@ -165,10 +165,10 @@ const detailRol = async (rolId, token) => {
   return result;
 };
 
-const deleteRol = async (token, rolId) => {
+const deleteRol = async (token, accessToken, rolId) => {
   const result = await axios
     .delete(HOST_URL + "/roles/delete/" + rolId, {
-      headers: { "X-Auth-token": token },
+      headers: { "X-Auth-token": token, accesstoken: accessToken },
     })
     .then((res) => {
       return res.data;
@@ -197,7 +197,7 @@ const deleteRol = async (token, rolId) => {
   }
 };
 
-const assignRol = async (token, userId, rolId) => {
+const assignRol = async (token, accessToken, userId, rolId) => {
   const result = await axios
     .put(
       HOST_URL + "/roles/assign",
@@ -206,6 +206,7 @@ const assignRol = async (token, userId, rolId) => {
         headers: {
           "X-Auth-token": token,
           "Content-Type": "application/json",
+          accessToken: accessToken,
         },
       }
     )

@@ -6,6 +6,7 @@ import validator from "validator";
 
 import { useAuth } from "../../context/UserContext";
 import { getRoles, assignRol } from "../../services/RolService";
+import { activateUserMail } from "../../services/MailerService";
 
 import { Card, Grid, TextField, Alert, Snackbar } from "@mui/material";
 import SecurityIcon from "@mui/icons-material/Security";
@@ -28,8 +29,8 @@ function UserCreate() {
   const [alert, setAlert] = useState(false);
   const [alertContent, setAlertContent] = useState("");
   const [loading, setLoading] = useState(true);
-  const [emailError, setEmailError] = useState("");
   let token = localStorage.getItem("Token");
+  let accesstoken = localStorage.getItem("Access");
 
   //Alerta
   const [openAlert, setOpenAlert] = useState(true);
@@ -58,9 +59,9 @@ function UserCreate() {
   };
 
   //Email
+  const [emailError, setEmailError] = useState("");
   const validateEmail = (e) => {
     var email = e;
-
     if (validator.isEmail(email)) {
       setEmailError("");
       return true;
@@ -94,26 +95,30 @@ function UserCreate() {
       handleClick();
     } else if (validateEmail(email)) {
       try {
-        if (isAuthenticated && token !== null) {
+        if (isAuthenticated && token !== null && accesstoken !== null) {
           const user = await createNewUser(
             token,
+            accesstoken,
             displayName,
             username,
             email,
             password
           );
-          if (
-            selectedValue !== null &&
-            selectedValue !== undefined &&
-            selectedValue !== "" &&
-            user !== null
-          ) {
-            selectedValue.map(async (rol) => {
-              await assignRol(token, user.user.id, rol);
-            });
-            navigate("/pages/users");
-          } else {
-            navigate("/pages/users");
+          if (user !== null) {
+            let userId = user.user.id;
+            activateUserMail(userId);
+            if (
+              selectedValue !== null &&
+              selectedValue !== undefined &&
+              selectedValue !== ""
+            ) {
+              selectedValue.map(async (rol) => {
+                await assignRol(token, accesstoken, userId, rol);
+              });
+              navigate("/pages/users");
+            } else {
+              navigate("/pages/users");
+            }
           }
         } else {
           navigate("/pages/authentication/sign-in");

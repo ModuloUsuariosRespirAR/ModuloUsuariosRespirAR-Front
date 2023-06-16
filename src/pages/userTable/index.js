@@ -22,6 +22,10 @@ function UserTable() {
   const [loading, setLoading] = useState(true);
 
   let token = localStorage.getItem("Token");
+  let accessToken = localStorage.getItem("Access");
+  let rolesUsuarioLogueado = localStorage.getItem("Roles");
+
+  console.log(rolesUsuarioLogueado);
 
   useEffect(() => {
     async function fetchUsersList() {
@@ -67,7 +71,7 @@ function UserTable() {
     try {
       if (isAuthenticated && confirm) {
         let id = rowData[0];
-        const result = await userDeletation(token, id);
+        const result = await userDeletation(token, accessToken, id);
         if (result !== null) {
           setUsers((users) => users.filter((u) => u.id !== id));
         } else {
@@ -135,18 +139,27 @@ function UserTable() {
               >
                 <InfoIcon />
               </IconButton>
-              <IconButton
-                aria-label="edit"
-                onClick={() => handleEdit(tableMeta.rowData)}
-              >
-                <EditIcon color="info" />
-              </IconButton>
-              <IconButton
-                aria-label="delete"
-                onClick={() => handleDelete(tableMeta.rowData)}
-              >
-                <DeleteIcon color="error" />
-              </IconButton>
+              {rolesUsuarioLogueado === "[]" ||
+              rolesUsuarioLogueado.includes("Modify") ? (
+                <IconButton
+                  aria-label="edit"
+                  onClick={() => handleEdit(tableMeta.rowData)}
+                >
+                  <EditIcon color="info" />
+                </IconButton>
+              ) : (
+                <></>
+              )}
+              {rolesUsuarioLogueado === "[]" ? (
+                <IconButton
+                  aria-label="delete"
+                  onClick={() => handleDelete(tableMeta.rowData)}
+                >
+                  <DeleteIcon color="error" />
+                </IconButton>
+              ) : (
+                <> </>
+              )}
             </>
           );
         },

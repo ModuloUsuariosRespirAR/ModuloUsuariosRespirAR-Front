@@ -1,10 +1,6 @@
 import { useState } from "react";
 
-import { useNavigate } from "react-router-dom";
-
-import { useAuth } from "../../../context/UserContext";
-
-import validator from "validator";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { Card, Grid, Alert, Snackbar } from "@mui/material";
 
@@ -15,36 +11,21 @@ import Button from "../../../components/Button";
 
 import BaseLayout from "../../../layouts/components/BaseLayout/BaseLayout";
 
-function SignInBasic() {
+function ModifyPassword() {
   const navigate = useNavigate();
+  function ObtenerId() {
+    let { id } = useParams();
+    return id;
+  }
 
-  const { loginUsuario } = useAuth();
-
-  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  let userId = ObtenerId();
 
   //Alert
   const [alert, setAlert] = useState(false);
   const [alertContent, setAlertContent] = useState("");
   const [openAlert, setOpenAlert] = useState(true);
-
-  //Email
-  const [emailError, setEmailError] = useState("");
-
-  const validateEmail = (e) => {
-    var email = e;
-    if (validator.isEmail(email)) {
-      setEmailError("");
-      return true;
-    } else {
-      setEmailError("Ingresá un email válido");
-      return false;
-    }
-  };
-
-  const handleClick = () => {
-    setOpenAlert(true);
-  };
 
   const handleCloseAlert = (event, reason) => {
     if (reason === "clickaway") {
@@ -53,31 +34,21 @@ function SignInBasic() {
     setOpenAlert(false);
   };
 
-  const recuperarContrasenia = () => {
-    navigate("/pages/recover-password");
-  };
-  const handleUsernameChange = (event) => {
-    setUsername(event.target.value);
+  const handleClick = () => {
+    setOpenAlert(true);
   };
 
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
   };
 
+  const handlePasswordConfirmationChange = (event) => {
+    setPasswordConfirmation(event.target.value);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      if (validateEmail(username)) {
-        const result = await loginUsuario(username, password);
-        if (result === null || result === undefined) {
-          setAlert(true);
-          setAlertContent("Error al loguear usuario");
-          handleClick();
-        } else {
-          console.log(result.roles);
-          navigate("/");
-        }
-      }
     } catch (error) {}
   };
 
@@ -135,20 +106,18 @@ function SignInBasic() {
                 <Box component="form" role="form">
                   <Box mb={2}>
                     <Input
-                      type="email"
-                      label="Email"
+                      type="password"
+                      label="Contraseña"
                       fullWidth
-                      placeholder="mail@mail.com"
-                      helperText={emailError}
-                      onChange={handleUsernameChange}
+                      onChange={handlePasswordChange}
                     />
                   </Box>
                   <Box mb={2}>
                     <Input
                       type="password"
-                      label="Password"
+                      label="Confirmar contraseña"
                       fullWidth
-                      onChange={handlePasswordChange}
+                      onChange={handlePasswordConfirmationChange}
                     />
                   </Box>
                   <Box mt={4} mb={1}>
@@ -158,17 +127,7 @@ function SignInBasic() {
                       color="info"
                       fullWidth
                     >
-                      sign in
-                    </Button>
-                  </Box>
-                  <Box mt={4} mb={1}>
-                    <Button
-                      onClick={recuperarContrasenia}
-                      variant="gradient"
-                      color="info"
-                      fullWidth
-                    >
-                      Recuperar contraseña
+                      Aceptar
                     </Button>
                   </Box>
                 </Box>
@@ -181,4 +140,4 @@ function SignInBasic() {
   );
 }
 
-export default SignInBasic;
+export default ModifyPassword;

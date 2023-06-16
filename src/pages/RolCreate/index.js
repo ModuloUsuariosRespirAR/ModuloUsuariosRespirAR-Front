@@ -20,6 +20,7 @@ function RolCreate() {
   const [permisos, setPermisos] = useState("");
   const navigate = useNavigate();
   let token = localStorage.getItem("Token");
+  let accessToken = localStorage.getItem("Access");
 
   const permisosEjemplos = [
     {
@@ -42,8 +43,8 @@ function RolCreate() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (token !== null) {
-      await createRol(token, rol);
+    if (token !== null && accessToken !== null) {
+      await createRol(token, accessToken, rol);
       navigate("/pages/roles");
     }
   };
