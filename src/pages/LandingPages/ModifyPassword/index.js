@@ -1,84 +1,79 @@
 import { useState } from "react";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { recoverPassword } from "../../../services/MailerService";
 
-import { useAuth } from "../../../context/UserContext";
-
-import validator from "validator";
-
-import { Card, Grid, Alert, Snackbar } from "@mui/material";
+import { Card, Grid, Alert, Snackbar, TextField } from "@mui/material";
 
 import Box from "../../../components/Box";
 import Typography from "../../../components/Typography";
-import Input from "../../../components/Input";
 import Button from "../../../components/Button";
 
 import BaseLayout from "../../../layouts/components/BaseLayout/BaseLayout";
 
-function SignInBasic() {
+function ModifyPassword() {
   const navigate = useNavigate();
+  function ObtenerId() {
+    let { id } = useParams();
+    return id;
+  }
 
-  const { loginUsuario } = useAuth();
-
-  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  let userId = ObtenerId();
 
   //Alert
   const [alert, setAlert] = useState(false);
+  const [alertSeverity, setAlertSeverity] = useState(false);
   const [alertContent, setAlertContent] = useState("");
   const [openAlert, setOpenAlert] = useState(true);
-
-  //Email
-  const [emailError, setEmailError] = useState("");
-
-  const validateEmail = (e) => {
-    var email = e;
-    if (validator.isEmail(email)) {
-      setEmailError("");
-      return true;
-    } else {
-      setEmailError("Ingresá un email válido");
-      return false;
-    }
-  };
-
-  const handleClick = () => {
-    setOpenAlert(true);
-  };
 
   const handleCloseAlert = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
     setOpenAlert(false);
-  };
-
-  const recuperarContrasenia = () => {
-    navigate("/pages/recover-password");
-  };
-  const handleUsernameChange = (event) => {
-    setUsername(event.target.value);
+    navigate("/pages/authentication/sign-in");
   };
 
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
   };
 
+  const handlePasswordConfirmationChange = (event) => {
+    setPasswordConfirmation(event.target.value);
+  };
+
+  const validatePassword = () => {
+    if (password.length > 0 && passwordConfirmation.length > 0) {
+      if (password !== passwordConfirmation) {
+        setError(true);
+        setErrorMessage("Las contraseñas no coinciden");
+      } else {
+        setError(false);
+        setErrorMessage("");
+      }
+    }
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-    try {
-      if (validateEmail(username)) {
-        const result = await loginUsuario(username, password);
-        if (result === null || result === undefined) {
+    if (!error) {
+      try {
+        const result = await recoverPassword(userId, passwordConfirmation);
+        if (JSON.stringify(result).includes("values_updated")) {
           setAlert(true);
-          setAlertContent("Error al loguear usuario");
-          handleClick();
+          setAlertContent("Contraseña modificada correctamente");
+          setAlertSeverity("success");
         } else {
-          console.log(result.roles);
-          navigate("/");
+          setAlert(true);
+          setAlertContent("La contraseña no pudo ser modificada");
+          setAlertSeverity("error");
         }
-      }
-    } catch (error) {}
+      } catch (error) {}
+    }
   };
 
   return (
@@ -87,14 +82,10 @@ function SignInBasic() {
         {alert ? (
           <Snackbar
             open={openAlert}
-            autoHideDuration={10000}
+            autoHideDuration={3000}
             onClose={handleCloseAlert}
           >
-            <Alert
-              severity="error"
-              onClose={handleCloseAlert}
-              sx={{ width: "100%" }}
-            >
+            <Alert severity={alertSeverity} sx={{ width: "100%" }}>
               {alertContent}
             </Alert>
           </Snackbar>
@@ -128,27 +119,28 @@ function SignInBasic() {
                   color="white"
                   mt={1}
                 >
-                  Sign in
+                  Modificar contraseña
                 </Typography>
               </Box>
               <Box pt={4} pb={3} px={3}>
                 <Box component="form" role="form">
                   <Box mb={2}>
-                    <Input
-                      type="email"
-                      label="Email"
+                    <TextField
+                      type="password"
+                      label="Contraseña"
                       fullWidth
-                      placeholder="mail@mail.com"
-                      helperText={emailError}
-                      onChange={handleUsernameChange}
+                      onChange={handlePasswordChange}
                     />
                   </Box>
                   <Box mb={2}>
-                    <Input
+                    <TextField
                       type="password"
-                      label="Password"
+                      label="Confirmar contraseña"
                       fullWidth
-                      onChange={handlePasswordChange}
+                      onChange={handlePasswordConfirmationChange}
+                      onKeyUp={validatePassword}
+                      error={error}
+                      helperText={errorMessage}
                     />
                   </Box>
                   <Box mt={4} mb={1}>
@@ -158,17 +150,7 @@ function SignInBasic() {
                       color="info"
                       fullWidth
                     >
-                      sign in
-                    </Button>
-                  </Box>
-                  <Box mt={4} mb={1}>
-                    <Button
-                      onClick={recuperarContrasenia}
-                      variant="gradient"
-                      color="info"
-                      fullWidth
-                    >
-                      Recuperar contraseña
+                      Aceptar
                     </Button>
                   </Box>
                 </Box>
@@ -181,4 +163,4 @@ function SignInBasic() {
   );
 }
 
-export default SignInBasic;
+export default ModifyPassword;

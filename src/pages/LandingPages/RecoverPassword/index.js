@@ -1,10 +1,6 @@
 import { useState } from "react";
 
-import { useNavigate } from "react-router-dom";
-
-import { useAuth } from "../../../context/UserContext";
-
-import validator from "validator";
+import { recoverPasswordMail } from "../../../services/MailerService";
 
 import { Card, Grid, Alert, Snackbar } from "@mui/material";
 
@@ -15,32 +11,14 @@ import Button from "../../../components/Button";
 
 import BaseLayout from "../../../layouts/components/BaseLayout/BaseLayout";
 
-function SignInBasic() {
-  const navigate = useNavigate();
-
-  const { loginUsuario } = useAuth();
-
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+function RecoverPassword() {
+  const [email, setEmail] = useState("");
 
   //Alert
+
   const [alert, setAlert] = useState(false);
   const [alertContent, setAlertContent] = useState("");
   const [openAlert, setOpenAlert] = useState(true);
-
-  //Email
-  const [emailError, setEmailError] = useState("");
-
-  const validateEmail = (e) => {
-    var email = e;
-    if (validator.isEmail(email)) {
-      setEmailError("");
-      return true;
-    } else {
-      setEmailError("Ingresá un email válido");
-      return false;
-    }
-  };
 
   const handleClick = () => {
     setOpenAlert(true);
@@ -53,31 +31,17 @@ function SignInBasic() {
     setOpenAlert(false);
   };
 
-  const recuperarContrasenia = () => {
-    navigate("/pages/recover-password");
-  };
-  const handleUsernameChange = (event) => {
-    setUsername(event.target.value);
-  };
-
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
+  const handleEmailChange = (event) => {
+    setEmail(event.target.value);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      if (validateEmail(username)) {
-        const result = await loginUsuario(username, password);
-        if (result === null || result === undefined) {
-          setAlert(true);
-          setAlertContent("Error al loguear usuario");
-          handleClick();
-        } else {
-          console.log(result.roles);
-          navigate("/");
-        }
-      }
+      const result = await recoverPasswordMail(email);
+      setAlert(true);
+      setAlertContent(result);
+      handleClick();
     } catch (error) {}
   };
 
@@ -87,11 +51,11 @@ function SignInBasic() {
         {alert ? (
           <Snackbar
             open={openAlert}
-            autoHideDuration={10000}
+            autoHideDuration={6000}
             onClose={handleCloseAlert}
           >
             <Alert
-              severity="error"
+              severity="info"
               onClose={handleCloseAlert}
               sx={{ width: "100%" }}
             >
@@ -128,7 +92,7 @@ function SignInBasic() {
                   color="white"
                   mt={1}
                 >
-                  Sign in
+                  Recuperar contraseña
                 </Typography>
               </Box>
               <Box pt={4} pb={3} px={3}>
@@ -138,17 +102,7 @@ function SignInBasic() {
                       type="email"
                       label="Email"
                       fullWidth
-                      placeholder="mail@mail.com"
-                      helperText={emailError}
-                      onChange={handleUsernameChange}
-                    />
-                  </Box>
-                  <Box mb={2}>
-                    <Input
-                      type="password"
-                      label="Password"
-                      fullWidth
-                      onChange={handlePasswordChange}
+                      onChange={handleEmailChange}
                     />
                   </Box>
                   <Box mt={4} mb={1}>
@@ -158,17 +112,7 @@ function SignInBasic() {
                       color="info"
                       fullWidth
                     >
-                      sign in
-                    </Button>
-                  </Box>
-                  <Box mt={4} mb={1}>
-                    <Button
-                      onClick={recuperarContrasenia}
-                      variant="gradient"
-                      color="info"
-                      fullWidth
-                    >
-                      Recuperar contraseña
+                      Recuperar
                     </Button>
                   </Box>
                 </Box>
@@ -181,4 +125,4 @@ function SignInBasic() {
   );
 }
 
-export default SignInBasic;
+export default RecoverPassword;

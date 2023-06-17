@@ -31,6 +31,7 @@ function UserModification() {
   }
   const userId = ObtenerId();
   let token = localStorage.getItem("Token");
+  let accesstoken = localStorage.getItem("Access");
   const navigate = useNavigate();
 
   const [userInfo, setUserInfo] = useState({
@@ -117,13 +118,18 @@ function UserModification() {
       selectedValue !== ""
     ) {
       selectedValue.map(async (rol) => {
-        await assignRol(token, userId, rol);
+        await assignRol(token, accesstoken, userId, rol);
       });
       navigate("/pages/users");
     }
     try {
       if (token !== null) {
-        const result = await userModification(token, userId, userInfo.username);
+        const result = await userModification(
+          token,
+          accesstoken,
+          userId,
+          userInfo.username
+        );
         if (!result.ok) {
           setAlert(true);
           setAlertContent("Error al modificar el usuario");

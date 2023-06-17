@@ -23,9 +23,10 @@ export const UserProvider = ({ children }) => {
 
   const loginUsuario = async (username, password) => {
     const loguedUser = await getUser(username, password);
-    if (loguedUser !== null) {
+    if (!loguedUser.error) {
       setUser(loguedUser);
       setIsAuthenticated(true);
+      return loguedUser;
     } else {
       return null;
     }
@@ -36,10 +37,12 @@ export const UserProvider = ({ children }) => {
     setUser(null);
     localStorage.removeItem("Token");
     localStorage.removeItem("Access");
+    localStorage.removeItem("Roles");
   };
 
   const createNewUser = async (
     token,
+    acessToken,
     displayName,
     username,
     email,
@@ -47,6 +50,7 @@ export const UserProvider = ({ children }) => {
   ) => {
     const createdUser = await createUser(
       token,
+      acessToken,
       displayName,
       username,
       email,
@@ -70,13 +74,13 @@ export const UserProvider = ({ children }) => {
     return userRoles;
   };
 
-  const userModification = async (token, userId, username) => {
-    const user = await userEdit(token, userId, username);
+  const userModification = async (token, accessToken, userId, username) => {
+    const user = await userEdit(token, accessToken, userId, username);
     return user;
   };
 
-  const userDeletation = async (token, userId) => {
-    const result = await userDelete(token, userId);
+  const userDeletation = async (token, accessToken, userId) => {
+    const result = await userDelete(token, accessToken, userId);
     return result;
   };
 
