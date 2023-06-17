@@ -22,8 +22,9 @@ import RolCreatePage from "./layouts/pages/rolCreate";
 import RolDetailsPage from "./layouts/pages/rolDetails";
 import RolModificationPage from "./layouts/pages/rolModification";
 import LogOut from "./pages/LandingPages/LogOut";
-import RecoverPassword from "./pages/LandingPages/RecoverPassword";
+import RecoverPassword from "./layouts/pages/recoverPassword";
 import ActivateUser from "./layouts/pages/activateUser";
+import ModifyPassword from "./layouts/pages/modifyPassword";
 
 function App() {
   const { pathname } = useLocation();
@@ -79,6 +80,10 @@ function App() {
           <Route path="/pages/log-out" element={<LogOut />} />
           <Route path="/pages/recover-password" element={<RecoverPassword />} />
           <Route path="/pages/activate-user/:id" element={<ActivateUser />} />
+          <Route
+            path="/pages/modify-password/:id"
+            element={<ModifyPassword />}
+          />
         </Routes>
       </ThemeProvider>
     </UserProvider>

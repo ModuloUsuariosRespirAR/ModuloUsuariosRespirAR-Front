@@ -43,4 +43,20 @@ const recoverPasswordMail = async (email) => {
   return result;
 };
 
-export { activateUserMail, activateUser, recoverPasswordMail };
+const recoverPassword = async (userId, password) => {
+  const result = await axios
+    .put(MAILER_URL + "/keyrock/change-password", {
+      id: userId,
+      password: password,
+    })
+    .then((res) => {
+      return res.data;
+    })
+    .catch((error) => {
+      return error;
+    });
+
+  return result;
+};
+
+export { activateUserMail, activateUser, recoverPasswordMail, recoverPassword };

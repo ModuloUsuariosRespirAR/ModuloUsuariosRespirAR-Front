@@ -38,40 +38,15 @@ function ActivateUser() {
         setAlert(true);
         setAlertContent(result);
         setAlertSeverity("success");
-        //setTimeout(navigate("/pages/authentication/sign-in"), 10000);
+        setTimeout(() => navigate("/pages/authentication/sign-in"), 3000);
       }
     }
     fetchData();
   }, []);
 
-  const handleCloseAlert = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    navigate("/pages/authentication/sign-in");
-    setOpenAlert(false);
-  };
-
   return (
     <>
       <BaseLayout>
-        {/* {alert ? (
-          <Snackbar
-            open={openAlert}
-            autoHideDuration={2000}
-            onClose={handleCloseAlert}
-          >
-            <Alert
-              severity={alertSeverity}
-              onClose={handleCloseAlert}
-              sx={{ width: "100%" }}
-            >
-              {alertContent}
-            </Alert>
-          </Snackbar>
-        ) : (
-          <></>
-        )} */}
         <Grid
           container
           spacing={1}
