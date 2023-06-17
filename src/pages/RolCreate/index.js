@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import { createRol } from "../../services/RolService";
 
@@ -11,35 +11,14 @@ import Box from "../../components/Box";
 import Typography from "../../components/Typography";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
-import MultipleSelectChip from "../../components/MultipleSelectChip";
 
 import BaseLayout from "../../layouts/components/BaseLayout/BaseLayout";
 
 function RolCreate() {
   const [rol, setRol] = useState("");
-  const [permisos, setPermisos] = useState("");
   const navigate = useNavigate();
   let token = localStorage.getItem("Token");
   let accessToken = localStorage.getItem("Access");
-
-  const permisosEjemplos = [
-    {
-      name: "Crear usuario",
-      id: 1,
-    },
-    {
-      name: "Editar usuario",
-      id: 2,
-    },
-    {
-      name: "Leer usuario",
-      id: 3,
-    },
-    {
-      name: "Borrar usuario",
-      id: 4,
-    },
-  ];
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -47,10 +26,6 @@ function RolCreate() {
       await createRol(token, accessToken, rol);
       navigate("/pages/roles");
     }
-  };
-
-  const handleChangePermisos = (event, value) => {
-    setPermisos(value);
   };
 
   return (
@@ -95,16 +70,6 @@ function RolCreate() {
                       fullWidth
                       value={rol}
                       onChange={(event) => setRol(event.target.value)}
-                    />
-                  </Box>
-                </Box>
-                <Box>
-                  <Box mb={2}>
-                    <MultipleSelectChip
-                      options={permisosEjemplos}
-                      label="Permisos"
-                      placeholder="Seleccione uno o más permisos"
-                      onChange={handleChangePermisos}
                     />
                   </Box>
                 </Box>

@@ -11,7 +11,6 @@ import BaseLayout from "../../../layouts/components/BaseLayout/BaseLayout";
 import users from "../../../assets/images/users.jpeg";
 import roles from "../../../assets/images/roles.jpeg";
 import HomeSpeedDial from "../../../components/SpeedDial";
-import CenteredFooter from "../../../components/Footer/CenteredFooter";
 
 const cards = [
   {
@@ -60,6 +59,7 @@ function DesignBlocks() {
 function Home() {
   const { isAuthenticated } = useAuth();
   let token = localStorage.getItem("Token");
+  let rolesUsuarioLogueado = localStorage.getItem("Roles");
 
   return (
     <>
@@ -76,7 +76,7 @@ function Home() {
             >
               <DesignBlocks />
             </Grid>
-            {isAuthenticated && token ? (
+            {isAuthenticated && token && rolesUsuarioLogueado === "[]" ? (
               <Grid spacing={24}>
                 <Grid
                   container

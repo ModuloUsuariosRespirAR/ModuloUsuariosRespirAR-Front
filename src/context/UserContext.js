@@ -91,7 +91,6 @@ export const UserProvider = ({ children }) => {
         .then((user) => {
           setIsAuthenticated(false);
           if (user) {
-            console.log(user);
             setIsAuthenticated(true);
           } else {
             localStorage.removeItem("Token");

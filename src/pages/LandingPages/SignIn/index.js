@@ -74,7 +74,6 @@ function SignInBasic() {
           setAlertContent("Error al loguear usuario");
           handleClick();
         } else {
-          console.log(result.roles);
           navigate("/");
         }
       }

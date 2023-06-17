@@ -1,5 +1,5 @@
 import axios from "axios";
-import { HOST_URL, MAILER_URL } from "../utils/util";
+import { HOST_URL } from "../utils/util";
 
 const getUsers = async (token) => {
   const result = await axios

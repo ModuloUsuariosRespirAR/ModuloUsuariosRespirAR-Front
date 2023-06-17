@@ -111,6 +111,8 @@ function UserModification() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    let error = "";
+    let errorString = "";
 
     if (
       selectedValue !== null &&
@@ -118,30 +120,39 @@ function UserModification() {
       selectedValue !== ""
     ) {
       selectedValue.map(async (rol) => {
-        await assignRol(token, accesstoken, userId, rol);
-      });
-      navigate("/pages/users");
-    }
-    try {
-      if (token !== null) {
-        const result = await userModification(
-          token,
-          accesstoken,
-          userId,
-          userInfo.username
-        );
-        if (!result.ok) {
-          setAlert(true);
-          setAlertContent("Error al modificar el usuario");
-          throw new Error("Error al modificar el usuario");
-        } else {
+        let result = await assignRol(token, accesstoken, userId, rol);
+
+        if (JSON.stringify(result).includes("401")) {
+          navigate("/pages/access-denied");
+          error = new Error("Sin permisos");
+          errorString = JSON.stringify(error);
+          throw error;
         }
-      } else {
-        setAlert(true);
-        setAlertContent("El usuario debe iniciar sesion");
-      }
-    } catch (error) {}
-    navigate("/pages/users");
+      });
+    }
+    if (errorString === null) {
+      try {
+        if (token !== null) {
+          const result = await userModification(
+            token,
+            accesstoken,
+            userId,
+            userInfo.username
+          );
+          if (!result.ok) {
+            console.log("Entra al if de usuario");
+            setAlert(true);
+            setAlertContent("Error al modificar el usuario");
+            throw new Error("Error al modificar el usuario");
+          } else {
+            navigate("/pages/users");
+          }
+        } else {
+          setAlert(true);
+          setAlertContent("El usuario debe iniciar sesion");
+        }
+      } catch (e) {}
+    }
   };
 
   if (loading) {
@@ -153,16 +164,9 @@ function UserModification() {
           {alert ? (
             <Snackbar
               autoHideDuration={6000}
-              onClose={navigate("/pages/users")}
+              //onClose={navigate("/pages/users")}
             >
-              <Alert
-                severity="error"
-                onClose={() => {
-                  navigate("/pages/users");
-                }}
-              >
-                {alertContent}
-              </Alert>
+              <Alert severity="error">{alertContent}</Alert>
             </Snackbar>
           ) : (
             <></>

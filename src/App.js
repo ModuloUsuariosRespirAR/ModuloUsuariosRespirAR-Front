@@ -25,6 +25,7 @@ import LogOut from "./pages/LandingPages/LogOut";
 import RecoverPassword from "./layouts/pages/recoverPassword";
 import ActivateUser from "./layouts/pages/activateUser";
 import ModifyPassword from "./layouts/pages/modifyPassword";
+import AccessDeniedPage from "./layouts/pages/accessDenied";
 
 function App() {
   const { pathname } = useLocation();
@@ -84,6 +85,7 @@ function App() {
             path="/pages/modify-password/:id"
             element={<ModifyPassword />}
           />
+          <Route path="/pages/access-denied" element={<AccessDeniedPage />} />
         </Routes>
       </ThemeProvider>
     </UserProvider>
