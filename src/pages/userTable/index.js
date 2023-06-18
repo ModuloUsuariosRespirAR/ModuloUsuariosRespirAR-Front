@@ -65,15 +65,17 @@ function UserTable() {
       "Está seguro que desea eliminar el usuario: " + rowData[1] + "?"
     );
     try {
-      if (isAuthenticated && confirm) {
-        let id = rowData[0];
-        const result = await userDeletation(token, accessToken, id);
-        if (result !== null) {
-          setUsers((users) => users.filter((u) => u.id !== id));
-        } else {
-          navigate("/pages/authentication/sign-in");
+      if (isAuthenticated) {
+        if (confirm) {
+          let id = rowData[0];
+          const result = await userDeletation(token, accessToken, id);
+          if (result !== null) {
+            setUsers((users) => users.filter((u) => u.id !== id));
+          } else {
+          }
         }
       } else {
+        navigate("/pages/authentication/sign-in");
       }
     } catch (error) {}
   };
@@ -165,7 +167,6 @@ function UserTable() {
   const options = {
     filter: true,
     selectableRows: "multiple",
-    //selectableRows: "single",
     filterType: "dropdown",
     responsive: "vertical",
     rowsPerPage: 10,
