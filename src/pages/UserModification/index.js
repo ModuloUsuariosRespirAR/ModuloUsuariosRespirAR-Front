@@ -42,7 +42,7 @@ function UserModification() {
 
   const { userModification, userDetails, userRoles } = useAuth();
   const [username, setUsername] = useState("");
-  const [habilitado, setHabilitado] = useState(false);
+  const [habilitado, setHabilitado] = useState(true);
   const [roles, setRoles] = useState("");
   const [rolesBase, setRolesBase] = useState("");
   const [alert, setAlert] = useState(false);
@@ -101,12 +101,20 @@ function UserModification() {
     fetchUserData();
   }, []);
 
-  const handleChange = (event) => {
+  const handleChangeUserName = (event) => {
     setUserInfo((ui) => ({
       ...ui,
       username: event.target.value,
     }));
     setUsername(userInfo.username);
+  };
+
+  const handleChangeHabilitado = (event) => {
+    console.log("event", event.target.checked);
+    setUserInfo((ui) => ({
+      ...ui,
+      enabled: event.target.checked,
+    }));
   };
 
   const handleSubmit = async (event) => {
@@ -130,17 +138,18 @@ function UserModification() {
         }
       });
     }
-    if (errorString === null) {
+    if (errorString === null || errorString === "") {
       try {
         if (token !== null) {
           const result = await userModification(
             token,
             accesstoken,
             userId,
-            userInfo.username
+            userInfo.username,
+            userInfo.enabled
           );
-          if (!result.ok) {
-            console.log("Entra al if de usuario");
+          console.log("result", result);
+          if (result === null) {
             setAlert(true);
             setAlertContent("Error al modificar el usuario");
             throw new Error("Error al modificar el usuario");
@@ -211,7 +220,7 @@ function UserModification() {
                         id="username"
                         fullWidth
                         value={userInfo.username}
-                        onChange={handleChange}
+                        onChange={handleChangeUserName}
                         error={userInfo.username === ""}
                         helperText={
                           userInfo.username === "" &&
@@ -234,10 +243,8 @@ function UserModification() {
                         control={
                           <Switch
                             color="warning"
-                            checked={habilitado}
-                            onChange={(event, value) =>
-                              setHabilitado(event.target.checked)
-                            }
+                            checked={userInfo.enabled}
+                            onChange={handleChangeHabilitado}
                           />
                         }
                       />

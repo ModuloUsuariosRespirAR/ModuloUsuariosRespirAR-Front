@@ -183,9 +183,10 @@ const userDetail = async (token, userId) => {
   return result;
 };
 
-const userEdit = async (token, accessToken, userId, username) => {
+const userEdit = async (token, accessToken, userId, username, enabled) => {
   const user = {
     username: username,
+    enabled: enabled,
   };
   const result = await axios
     .put(
