@@ -177,7 +177,8 @@ function UserTable() {
       projectsToDelete.map(async (ud) => {
         try {
           if (isAuthenticated) {
-            const result = await userDeletation(token, ud);
+            console.log("entra al autenticador");
+            const result = await userDeletation(token, accessToken, ud);
             if (result !== null) {
               setUsers((users) => users.filter((u) => u.id !== ud));
             } else {

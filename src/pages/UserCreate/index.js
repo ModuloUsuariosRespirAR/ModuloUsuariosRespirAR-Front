@@ -98,7 +98,7 @@ function UserCreate() {
             email,
             "1234"
           );
-          if (user !== null) {
+          if (user !== null && !user.error) {
             let userId = user.user.id;
             activateUserMail(userId);
             if (
@@ -113,6 +113,10 @@ function UserCreate() {
             } else {
               navigate("/pages/users");
             }
+          } else {
+            setAlert(true);
+            setAlertContent("El correo electrónico ya fue utilizado");
+            handleClick();
           }
         } else {
           navigate("/pages/authentication/sign-in");
@@ -130,7 +134,7 @@ function UserCreate() {
           {alert ? (
             <Snackbar
               open={openAlert}
-              autoHideDuration={6000}
+              autoHideDuration={3000}
               onClose={handleCloseAlert}
             >
               <Alert
