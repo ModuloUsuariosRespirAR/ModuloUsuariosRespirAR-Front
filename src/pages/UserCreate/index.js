@@ -24,7 +24,6 @@ function UserCreate() {
   const [displayName, setDisplayName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [rolesBase, setRolesBase] = useState("");
   const [alert, setAlert] = useState(false);
   const [alertContent, setAlertContent] = useState("");
@@ -84,12 +83,7 @@ function UserCreate() {
   //Guardo usuario junto con sus roles
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (
-      username === "" ||
-      displayName === "" ||
-      email === "" ||
-      password === ""
-    ) {
+    if (username === "" || displayName === "" || email === "") {
       setAlert(true);
       setAlertContent("Debe completar todos los campos");
       handleClick();
@@ -102,7 +96,7 @@ function UserCreate() {
             displayName,
             username,
             email,
-            password
+            "1234"
           );
           if (user !== null) {
             let userId = user.user.id;
@@ -214,16 +208,6 @@ function UserCreate() {
                         required
                         placeholder="mail@mail.com"
                         helperText={emailError}
-                      />
-                    </Box>
-                    <Box mb={2}>
-                      <TextField
-                        type="password"
-                        label="Contraseña"
-                        fullWidth
-                        value={password}
-                        onChange={(event) => setPassword(event.target.value)}
-                        required
                       />
                     </Box>
                     <Box mb={2}>
