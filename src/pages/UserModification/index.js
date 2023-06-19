@@ -119,8 +119,7 @@ function UserModification() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    let error = "";
-    let errorString = "";
+    let error = [""];
 
     if (
       selectedValue !== null &&
@@ -130,15 +129,18 @@ function UserModification() {
       selectedValue.map(async (rol) => {
         let result = await assignRol(token, accesstoken, userId, rol);
 
-        if (JSON.stringify(result).includes("401")) {
+        if (
+          JSON.stringify(result).includes("401") ||
+          JSON.stringify(result).includes("403")
+        ) {
           navigate("/pages/access-denied");
-          error = new Error("Sin permisos");
-          errorString = JSON.stringify(error);
-          throw error;
+          error.push("Sin permisos");
         }
       });
     }
-    if (errorString === null || errorString === "") {
+
+    console.log("error", error);
+    if (error === null || error === "") {
       try {
         if (token !== null) {
           const result = await userModification(
