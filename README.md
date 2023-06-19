@@ -25,8 +25,7 @@ ModuloUsuariosRespirAR-Front es un proyecto front-end realizado con React JS par
 ## Instalación
 
 1. Clona el repositorio: `git clone https://github.com/ModuloUsuariosRespirAR/ModuloUsuariosRespirAR-Front.git`
-2. Navega al directorio del proyecto: `cd ModuloUsuariosRespirAR-Mailer`
-3. Instala las dependencias: `npm install`
+2. Instala las dependencias: `npm install`
 
 ## Configuración y uso
 
