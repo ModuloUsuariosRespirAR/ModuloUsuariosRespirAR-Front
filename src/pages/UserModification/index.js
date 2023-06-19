@@ -42,7 +42,6 @@ function UserModification() {
 
   const { userModification, userDetails, userRoles } = useAuth();
   const [username, setUsername] = useState("");
-  const [habilitado, setHabilitado] = useState(true);
   const [roles, setRoles] = useState("");
   const [rolesBase, setRolesBase] = useState("");
   const [alert, setAlert] = useState(false);
@@ -110,7 +109,6 @@ function UserModification() {
   };
 
   const handleChangeHabilitado = (event) => {
-    console.log("event", event.target.checked);
     setUserInfo((ui) => ({
       ...ui,
       enabled: event.target.checked,
@@ -119,7 +117,7 @@ function UserModification() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    let error = [""];
+    let error = [];
 
     if (
       selectedValue !== null &&
@@ -139,8 +137,7 @@ function UserModification() {
       });
     }
 
-    console.log("error", error);
-    if (error === null || error === "") {
+    if (error === null || error.length === 0) {
       try {
         if (token !== null) {
           const result = await userModification(

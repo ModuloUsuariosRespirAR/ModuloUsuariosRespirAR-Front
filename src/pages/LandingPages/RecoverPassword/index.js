@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import { useNavigate } from "react-router-dom";
+
 import { recoverPasswordMail } from "../../../services/MailerService";
 
 import { Card, Grid, Alert, Snackbar } from "@mui/material";
@@ -13,6 +15,7 @@ import BaseLayout from "../../../layouts/components/BaseLayout/BaseLayout";
 
 function RecoverPassword() {
   const [email, setEmail] = useState("");
+  const navigate = useNavigate();
 
   //Alert
 
@@ -35,6 +38,16 @@ function RecoverPassword() {
     setEmail(event.target.value);
   };
 
+  //Borrar campo una vez que se pidó la recuperación de la contraseña
+  const handleReset = () => {
+    Array.from(document.querySelectorAll("input")).forEach(
+      (input) => (input.value = "")
+    );
+    this.setState({
+      itemvalues: [{}],
+    });
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -42,6 +55,7 @@ function RecoverPassword() {
       setAlert(true);
       setAlertContent(result);
       handleClick();
+      handleReset();
     } catch (error) {}
   };
 
@@ -51,7 +65,7 @@ function RecoverPassword() {
         {alert ? (
           <Snackbar
             open={openAlert}
-            autoHideDuration={6000}
+            autoHideDuration={2000}
             onClose={handleCloseAlert}
           >
             <Alert
