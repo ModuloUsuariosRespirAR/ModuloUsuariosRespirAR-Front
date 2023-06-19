@@ -4,33 +4,70 @@ import { createRol } from "../../services/RolService";
 
 import { useNavigate } from "react-router-dom";
 
-import Card from "@mui/material/Card";
-import Grid from "@mui/material/Grid";
+import { Card, Grid, TextField, Alert, Snackbar } from "@mui/material";
 
 import Box from "../../components/Box";
 import Typography from "../../components/Typography";
-import Input from "../../components/Input";
 import Button from "../../components/Button";
 
 import BaseLayout from "../../layouts/components/BaseLayout/BaseLayout";
 
 function RolCreate() {
   const [rol, setRol] = useState("");
+  const [alert, setAlert] = useState(false);
+  const [alertContent, setAlertContent] = useState("");
   const navigate = useNavigate();
   let token = localStorage.getItem("Token");
   let accessToken = localStorage.getItem("Access");
 
+  //Alerta
+  const [openAlert, setOpenAlert] = useState(true);
+  const handleClick = () => {
+    setOpenAlert(true);
+  };
+
+  const handleCloseAlert = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpenAlert(false);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (token !== null && accessToken !== null) {
-      await createRol(token, accessToken, rol);
-      navigate("/pages/roles");
+    if (rol === "") {
+      setAlert(true);
+      setAlertContent("Debe completar todos los campos");
+      handleClick();
+    } else {
+      if (token !== null && accessToken !== null) {
+        await createRol(token, accessToken, rol);
+        navigate("/pages/roles");
+      }
     }
   };
 
   return (
     <>
       <BaseLayout>
+        {alert ? (
+          <Snackbar
+            open={openAlert}
+            autoHideDuration={3000}
+            onClose={handleCloseAlert}
+          >
+            <Alert
+              severity="error"
+              onClose={handleCloseAlert}
+              sx={{ width: "100%" }}
+            >
+              {alertContent}
+            </Alert>
+          </Snackbar>
+        ) : (
+          <></>
+        )}
         <Grid
           container
           spacing={1}
@@ -64,7 +101,7 @@ function RolCreate() {
               <Box pt={4} pb={3} px={3}>
                 <Box component="form" role="form">
                   <Box mb={2}>
-                    <Input
+                    <TextField
                       type="text"
                       label="Rol"
                       fullWidth
