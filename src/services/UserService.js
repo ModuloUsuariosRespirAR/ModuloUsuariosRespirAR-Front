@@ -1,5 +1,5 @@
 import axios from "axios";
-import { HOST_URL, MAILER_URL } from "../utils/util";
+import { HOST_URL } from "../utils/util";
 
 const getUsers = async (token) => {
   const result = await axios
@@ -183,9 +183,10 @@ const userDetail = async (token, userId) => {
   return result;
 };
 
-const userEdit = async (token, accessToken, userId, username) => {
+const userEdit = async (token, accessToken, userId, username, enabled) => {
   const user = {
     username: username,
+    enabled: enabled,
   };
   const result = await axios
     .put(

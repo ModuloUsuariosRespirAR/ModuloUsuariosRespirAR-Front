@@ -2,9 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import { useAuth } from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
-import { format } from "date-fns";
 import Moment from "moment";
-import dateFormat from "dateformat";
 
 import MUIDataTable from "mui-datatables";
 import { IconButton, Grid, Card, Button, Switch, Alert } from "@mui/material";
@@ -24,8 +22,6 @@ function UserTable() {
   let token = localStorage.getItem("Token");
   let accessToken = localStorage.getItem("Access");
   let rolesUsuarioLogueado = localStorage.getItem("Roles");
-
-  console.log(rolesUsuarioLogueado);
 
   useEffect(() => {
     async function fetchUsersList() {
@@ -50,7 +46,7 @@ function UserTable() {
 
   const handleInfo = (rowData) => {
     if (isAuthenticated && token) {
-      navigate("/pages/userDetails/" + `${rowData[0]}`);
+      navigate("/pages/userDetails/" + rowData[0]);
     } else {
       navigate("/pages/authentication/sign-in");
     }
@@ -58,7 +54,7 @@ function UserTable() {
 
   const handleEdit = (rowData) => {
     if (isAuthenticated && token) {
-      navigate("/pages/userModification/" + `${rowData[0]}`);
+      navigate("/pages/userModification/" + rowData[0]);
     } else {
       navigate("/pages/authentication/sign-in");
     }
@@ -69,15 +65,17 @@ function UserTable() {
       "Está seguro que desea eliminar el usuario: " + rowData[1] + "?"
     );
     try {
-      if (isAuthenticated && confirm) {
-        let id = rowData[0];
-        const result = await userDeletation(token, accessToken, id);
-        if (result !== null) {
-          setUsers((users) => users.filter((u) => u.id !== id));
-        } else {
-          navigate("/pages/authentication/sign-in");
+      if (isAuthenticated) {
+        if (confirm) {
+          let id = rowData[0];
+          const result = await userDeletation(token, accessToken, id);
+          if (result !== null) {
+            setUsers((users) => users.filter((u) => u.id !== id));
+          } else {
+          }
         }
       } else {
+        navigate("/pages/authentication/sign-in");
       }
     } catch (error) {}
   };
@@ -118,7 +116,6 @@ function UserTable() {
       options: {
         customRowRender: ({ value }) => {
           if (value) {
-            console.log("value", value);
             Moment(value, "mmmm dS, yyyy");
           } else {
             value = "N/A";
@@ -170,7 +167,6 @@ function UserTable() {
   const options = {
     filter: true,
     selectableRows: "multiple",
-    //selectableRows: "single",
     filterType: "dropdown",
     responsive: "vertical",
     rowsPerPage: 10,
@@ -178,11 +174,11 @@ function UserTable() {
       const projectsToDelete = rowsDeleted.data.map(
         (d) => users[d.dataIndex].id
       );
-      console.log(projectsToDelete);
       projectsToDelete.map(async (ud) => {
         try {
           if (isAuthenticated) {
-            const result = await userDeletation(token, ud);
+            console.log("entra al autenticador");
+            const result = await userDeletation(token, accessToken, ud);
             if (result !== null) {
               setUsers((users) => users.filter((u) => u.id !== ud));
             } else {
@@ -211,15 +207,19 @@ function UserTable() {
                 marginBottom="5px"
               >
                 <Grid item xs={0} sm={0} md={0} lg={0} xl={0}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    size="meduim"
-                    startIcon={<AddIcon />}
-                    onClick={handleCreate}
-                  >
-                    Crear usuario
-                  </Button>
+                  {rolesUsuarioLogueado === "[]" ? (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      size="meduim"
+                      startIcon={<AddIcon />}
+                      onClick={handleCreate}
+                    >
+                      Crear usuario
+                    </Button>
+                  ) : (
+                    <> </>
+                  )}
                 </Grid>
               </Grid>
               <Grid

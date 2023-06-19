@@ -2,13 +2,12 @@ import { useEffect, useState } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
 
-import { Card, Grid, Alert, Snackbar } from "@mui/material";
+import { Card, Grid, Alert } from "@mui/material";
 
 import { activateUser } from "../../../services/MailerService";
 
 import Box from "../../../components/Box";
 import Typography from "../../../components/Typography";
-import Button from "../../../components/Button";
 
 import BaseLayout from "../../../layouts/components/BaseLayout/BaseLayout";
 
@@ -22,20 +21,16 @@ function ActivateUser() {
   let userId = ObtenerId();
 
   //Alert
-  const [alert, setAlert] = useState(false);
   const [alertContent, setAlertContent] = useState("");
   const [alertSeverity, setAlertSeverity] = useState("");
-  const [openAlert, setOpenAlert] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
       const result = await activateUser(userId);
       if (result.toString().includes("no fue encontrado")) {
-        setAlert(true);
         setAlertContent(result);
         setAlertSeverity("error");
       } else {
-        setAlert(true);
         setAlertContent(result);
         setAlertSeverity("success");
         setTimeout(() => navigate("/pages/authentication/sign-in"), 3000);

@@ -42,7 +42,6 @@ function UserModification() {
 
   const { userModification, userDetails, userRoles } = useAuth();
   const [username, setUsername] = useState("");
-  const [habilitado, setHabilitado] = useState(false);
   const [roles, setRoles] = useState("");
   const [rolesBase, setRolesBase] = useState("");
   const [alert, setAlert] = useState(false);
@@ -101,7 +100,7 @@ function UserModification() {
     fetchUserData();
   }, []);
 
-  const handleChange = (event) => {
+  const handleChangeUserName = (event) => {
     setUserInfo((ui) => ({
       ...ui,
       username: event.target.value,
@@ -109,8 +108,16 @@ function UserModification() {
     setUsername(userInfo.username);
   };
 
+  const handleChangeHabilitado = (event) => {
+    setUserInfo((ui) => ({
+      ...ui,
+      enabled: event.target.checked,
+    }));
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+    let error = [];
 
     if (
       selectedValue !== null &&
@@ -118,30 +125,42 @@ function UserModification() {
       selectedValue !== ""
     ) {
       selectedValue.map(async (rol) => {
-        await assignRol(token, accesstoken, userId, rol);
-      });
-      navigate("/pages/users");
-    }
-    try {
-      if (token !== null) {
-        const result = await userModification(
-          token,
-          accesstoken,
-          userId,
-          userInfo.username
-        );
-        if (!result.ok) {
-          setAlert(true);
-          setAlertContent("Error al modificar el usuario");
-          throw new Error("Error al modificar el usuario");
-        } else {
+        let result = await assignRol(token, accesstoken, userId, rol);
+
+        if (
+          JSON.stringify(result).includes("401") ||
+          JSON.stringify(result).includes("403")
+        ) {
+          navigate("/pages/access-denied");
+          error.push("Sin permisos");
         }
-      } else {
-        setAlert(true);
-        setAlertContent("El usuario debe iniciar sesion");
-      }
-    } catch (error) {}
-    navigate("/pages/users");
+      });
+    }
+
+    if (error === null || error.length === 0) {
+      try {
+        if (token !== null) {
+          const result = await userModification(
+            token,
+            accesstoken,
+            userId,
+            userInfo.username,
+            userInfo.enabled
+          );
+          console.log("result", result);
+          if (result === null) {
+            setAlert(true);
+            setAlertContent("Error al modificar el usuario");
+            throw new Error("Error al modificar el usuario");
+          } else {
+            navigate("/pages/users");
+          }
+        } else {
+          setAlert(true);
+          setAlertContent("El usuario debe iniciar sesion");
+        }
+      } catch (e) {}
+    }
   };
 
   if (loading) {
@@ -153,16 +172,9 @@ function UserModification() {
           {alert ? (
             <Snackbar
               autoHideDuration={6000}
-              onClose={navigate("/pages/users")}
+              //onClose={navigate("/pages/users")}
             >
-              <Alert
-                severity="error"
-                onClose={() => {
-                  navigate("/pages/users");
-                }}
-              >
-                {alertContent}
-              </Alert>
+              <Alert severity="error">{alertContent}</Alert>
             </Snackbar>
           ) : (
             <></>
@@ -207,7 +219,7 @@ function UserModification() {
                         id="username"
                         fullWidth
                         value={userInfo.username}
-                        onChange={handleChange}
+                        onChange={handleChangeUserName}
                         error={userInfo.username === ""}
                         helperText={
                           userInfo.username === "" &&
@@ -230,10 +242,8 @@ function UserModification() {
                         control={
                           <Switch
                             color="warning"
-                            checked={habilitado}
-                            onChange={(event, value) =>
-                              setHabilitado(event.target.checked)
-                            }
+                            checked={userInfo.enabled}
+                            onChange={handleChangeHabilitado}
                           />
                         }
                       />

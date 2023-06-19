@@ -24,7 +24,6 @@ function UserCreate() {
   const [displayName, setDisplayName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [rolesBase, setRolesBase] = useState("");
   const [alert, setAlert] = useState(false);
   const [alertContent, setAlertContent] = useState("");
@@ -84,12 +83,7 @@ function UserCreate() {
   //Guardo usuario junto con sus roles
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (
-      username === "" ||
-      displayName === "" ||
-      email === "" ||
-      password === ""
-    ) {
+    if (username === "" || displayName === "" || email === "") {
       setAlert(true);
       setAlertContent("Debe completar todos los campos");
       handleClick();
@@ -102,9 +96,9 @@ function UserCreate() {
             displayName,
             username,
             email,
-            password
+            "1234"
           );
-          if (user !== null) {
+          if (user !== null && !user.error) {
             let userId = user.user.id;
             activateUserMail(userId);
             if (
@@ -119,6 +113,10 @@ function UserCreate() {
             } else {
               navigate("/pages/users");
             }
+          } else {
+            setAlert(true);
+            setAlertContent("El correo electrónico ya fue utilizado");
+            handleClick();
           }
         } else {
           navigate("/pages/authentication/sign-in");
@@ -136,7 +134,7 @@ function UserCreate() {
           {alert ? (
             <Snackbar
               open={openAlert}
-              autoHideDuration={6000}
+              autoHideDuration={3000}
               onClose={handleCloseAlert}
             >
               <Alert
@@ -214,16 +212,6 @@ function UserCreate() {
                         required
                         placeholder="mail@mail.com"
                         helperText={emailError}
-                      />
-                    </Box>
-                    <Box mb={2}>
-                      <TextField
-                        type="password"
-                        label="Contraseña"
-                        fullWidth
-                        value={password}
-                        onChange={(event) => setPassword(event.target.value)}
-                        required
                       />
                     </Box>
                     <Box mb={2}>

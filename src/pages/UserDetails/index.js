@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 
 import { useParams, useNavigate } from "react-router-dom";
 
@@ -13,7 +13,6 @@ import Input from "../../components/Input";
 import Button from "../../components/Button";
 import MultipleSelectChip from "../../components/MultipleSelectChip";
 
-import { CheckBox } from "@mui/icons-material";
 import BaseLayout from "../../layouts/components/BaseLayout/BaseLayout";
 
 function UserSettings() {
@@ -22,6 +21,8 @@ function UserSettings() {
     return id;
   }
   let token = localStorage.getItem("Token");
+  let rolesUsuarioLogueado = localStorage.getItem("Roles");
+
   const navigate = useNavigate();
   const userId = ObtenerId();
   const [userInfo, setUserInfo] = useState([]);
@@ -142,27 +143,21 @@ function UserSettings() {
                     />
                   </Box>
                 </Box>
-                {/* <Box display="flex" alignItems="center" ml={0}>
-                  <CheckBox disabled />
-                  <Typography
-                    variant="button"
-                    fontWeight="regular"
-                    color="text"
-                    sx={{ cursor: "pointer", userSelect: "none", ml: -1 }}
-                  >
-                    &nbsp;&nbsp;Cuenta Verificada
-                  </Typography>
-                </Box> */}
-                <Box mt={4} mb={1}>
-                  <Button
-                    variant="gradient"
-                    color="info"
-                    fullWidth
-                    onClick={handleEdit}
-                  >
-                    Editar
-                  </Button>
-                </Box>
+                {rolesUsuarioLogueado === "[]" ||
+                rolesUsuarioLogueado.includes("Modify") ? (
+                  <Box mt={4} mb={1}>
+                    <Button
+                      variant="gradient"
+                      color="info"
+                      fullWidth
+                      onClick={handleEdit}
+                    >
+                      Editar
+                    </Button>
+                  </Box>
+                ) : (
+                  <></>
+                )}
               </Box>
             </Card>
           </Grid>

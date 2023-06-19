@@ -11,7 +11,6 @@ import Box from "../../components/Box";
 import Typography from "../../components/Typography";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
-import MultipleSelectChip from "../../components/MultipleSelectChip";
 
 import BaseLayout from "../../layouts/components/BaseLayout/BaseLayout";
 
@@ -32,25 +31,6 @@ function RolDetails() {
     }
     fetchUserData();
   }, []);
-
-  const permisosEjemplos = [
-    {
-      name: "Crear usuario",
-      id: 1,
-    },
-    {
-      name: "Editar usuario",
-      id: 2,
-    },
-    {
-      name: "Leer usuario",
-      id: 3,
-    },
-    {
-      name: "Borrar usuario",
-      id: 4,
-    },
-  ];
 
   const handleEdit = (event) => {
     navigate("/pages/rolModification/" + rolId);
@@ -99,16 +79,6 @@ function RolDetails() {
                         fullWidth
                         value={rol.name || ""}
                         disabled
-                      />
-                    </Box>
-                  </Box>
-                  <Box>
-                    <Box mb={2}>
-                      <MultipleSelectChip
-                        options={permisosEjemplos}
-                        label="Permisos"
-                        placeholder="Seleccione uno o más permisos"
-                        disabled="true"
                       />
                     </Box>
                   </Box>

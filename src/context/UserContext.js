@@ -74,8 +74,14 @@ export const UserProvider = ({ children }) => {
     return userRoles;
   };
 
-  const userModification = async (token, accessToken, userId, username) => {
-    const user = await userEdit(token, accessToken, userId, username);
+  const userModification = async (
+    token,
+    accessToken,
+    userId,
+    username,
+    enabled
+  ) => {
+    const user = await userEdit(token, accessToken, userId, username, enabled);
     return user;
   };
 
@@ -91,7 +97,6 @@ export const UserProvider = ({ children }) => {
         .then((user) => {
           setIsAuthenticated(false);
           if (user) {
-            console.log(user);
             setIsAuthenticated(true);
           } else {
             localStorage.removeItem("Token");

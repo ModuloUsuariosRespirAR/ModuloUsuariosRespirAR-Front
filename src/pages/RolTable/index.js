@@ -17,11 +17,13 @@ import { getRoles, deleteRol } from "../../services/RolService";
 function RolTable() {
   const navigate = useNavigate();
 
-  let token = localStorage.getItem("Token");
-  let accessToken = localStorage.getItem("Access");
   const [roles, setRoles] = useState("");
   const [loading, setLoading] = useState(true);
   const { isAuthenticated } = useAuth();
+
+  let token = localStorage.getItem("Token");
+  let accessToken = localStorage.getItem("Access");
+  let rolesUsuarioLogueado = localStorage.getItem("Roles");
 
   useEffect(() => {
     async function fetchData() {
@@ -61,18 +63,27 @@ function RolTable() {
               >
                 <InfoIcon />
               </IconButton>
-              <IconButton
-                aria-label="edit"
-                onClick={() => handleEdit(tableMeta.rowData)}
-              >
-                <EditIcon color="info" />
-              </IconButton>
-              <IconButton
-                aria-label="delete"
-                onClick={() => handleDelete(tableMeta.rowData)}
-              >
-                <DeleteIcon color="error" />
-              </IconButton>
+              {rolesUsuarioLogueado === "[]" ||
+              rolesUsuarioLogueado.includes("Modify") ? (
+                <IconButton
+                  aria-label="edit"
+                  onClick={() => handleEdit(tableMeta.rowData)}
+                >
+                  <EditIcon color="info" />
+                </IconButton>
+              ) : (
+                <></>
+              )}
+              {rolesUsuarioLogueado === "[]" ? (
+                <IconButton
+                  aria-label="delete"
+                  onClick={() => handleDelete(tableMeta.rowData)}
+                >
+                  <DeleteIcon color="error" />
+                </IconButton>
+              ) : (
+                <></>
+              )}
             </>
           );
         },
@@ -89,7 +100,7 @@ function RolTable() {
   };
 
   const handleInfo = (rowData) => {
-    navigate("/pages/rolDetails/" + `${rowData[0]}`);
+    navigate("/pages/rolDetails/" + rowData[0]);
   };
 
   const handleCreate = () => {
@@ -97,7 +108,7 @@ function RolTable() {
   };
 
   const handleEdit = (rowData) => {
-    navigate("/pages/rolModification/" + `${rowData[0]}`);
+    navigate("/pages/rolModification/" + rowData[0]);
   };
 
   const handleDelete = async (rowData) => {
@@ -134,15 +145,19 @@ function RolTable() {
                 marginBottom="5px"
               >
                 <Grid item xs={0} sm={0} md={0} lg={0} xl={0}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    size="meduim"
-                    startIcon={<AddIcon />}
-                    onClick={handleCreate}
-                  >
-                    Crear rol
-                  </Button>
+                  {rolesUsuarioLogueado === "[]" ? (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      size="meduim"
+                      startIcon={<AddIcon />}
+                      onClick={handleCreate}
+                    >
+                      Crear rol
+                    </Button>
+                  ) : (
+                    <> </>
+                  )}
                 </Grid>
               </Grid>
               <Grid
